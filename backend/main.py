@@ -1,16 +1,10 @@
-import sys
-from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from student_service.main import router as student_router
 from course_service.main import router as course_router
 from grade_service.main import router as grade_router
 
-app = FastAPI(
-    title="Student Management System",
-    description="Combined API for Student, Course, and Grade Management",
-    version="1.0.0"
-)
+app = FastAPI(title="Student Management System")
 
 # Add CORS middleware
 app.add_middleware(
@@ -21,11 +15,11 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# Include all routers
-app.include_router(student_router)
-app.include_router(course_router)
-app.include_router(grade_router)
+# Include routers
+app.include_router(student_router, prefix="/students", tags=["students"])
+app.include_router(course_router, prefix="/courses", tags=["courses"])
+app.include_router(grade_router, prefix="/grades", tags=["grades"])
 
 @app.get("/health")
-def health():
-    return {"status": "ok", "services": ["student", "course", "grade"]} 
+async def health_check():
+    return {"status": "healthy"} 

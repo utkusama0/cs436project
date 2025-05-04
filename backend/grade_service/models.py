@@ -1,35 +1,16 @@
-from typing import List, Optional
+from sqlalchemy import Column, String, Integer, Date, ForeignKey, CheckConstraint
+from database import Base
 
-class GradeModel:
-    _grades: List[dict] = []
-    _id_counter: int = 1
+class Grade(Base):
+    __tablename__ = "grades"
 
-    @classmethod
-    def all(cls):
-        return cls._grades
+    id = Column(Integer, primary_key=True)
+    student_id = Column(String(10), ForeignKey('students.student_id'))
+    course_code = Column(String(10), ForeignKey('courses.course_code'))
+    grade = Column(Integer, nullable=False)
+    semester = Column(String(20), nullable=False)
+    date = Column(Date, nullable=False)
 
-    @classmethod
-    def get(cls, grade_id: int) -> Optional[dict]:
-        return next((g for g in cls._grades if g["id"] == grade_id), None)
-
-    @classmethod
-    def create(cls, data: dict) -> dict:
-        data["id"] = cls._id_counter
-        cls._id_counter += 1
-        cls._grades.append(data)
-        return data
-
-    @classmethod
-    def update(cls, grade_id: int, data: dict) -> Optional[dict]:
-        grade = cls.get(grade_id)
-        if grade:
-            grade.update(data)
-        return grade
-
-    @classmethod
-    def delete(cls, grade_id: int) -> bool:
-        grade = cls.get(grade_id)
-        if grade:
-            cls._grades.remove(grade)
-            return True
-        return False
+    __table_args__ = (
+        CheckConstraint('grade >= 0 AND grade <= 100', name='check_grade_range'),
+    )

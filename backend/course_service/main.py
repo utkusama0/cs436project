@@ -1,42 +1,47 @@
-from fastapi import FastAPI, APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
-from course_service.schemas import Course, CourseCreate, CourseUpdate
-from course_service.models import CourseModel
+from sqlalchemy.orm import Session
+from .schemas import Course as CourseSchema, CourseCreate, CourseUpdate
+from .models import Course
+from database import get_db
 
-app = FastAPI(title="Course Service")
-router = APIRouter(prefix="/courses", tags=["courses"])
+router = APIRouter()
 
-@router.get("/", response_model=List[Course])
-def list_courses():
-    return CourseModel.all()
+@router.get("/", response_model=List[CourseSchema])
+def list_courses(db: Session = Depends(get_db)):
+    return db.query(Course).all()
 
-@router.post("/", response_model=Course, status_code=status.HTTP_201_CREATED)
-def create_course(course: CourseCreate):
-    return CourseModel.create(course.dict())
+@router.post("/", response_model=CourseSchema, status_code=status.HTTP_201_CREATED)
+def create_course(course: CourseCreate, db: Session = Depends(get_db)):
+    db_course = Course(**course.dict())
+    db.add(db_course)
+    db.commit()
+    db.refresh(db_course)
+    return db_course
 
-@router.get("/{course_id}", response_model=Course)
-def get_course(course_id: int):
-    course = CourseModel.get(course_id)
+@router.get("/{course_code}", response_model=CourseSchema)
+def get_course(course_code: str, db: Session = Depends(get_db)):
+    course = db.query(Course).filter(Course.course_code == course_code).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
     return course
 
-@router.put("/{course_id}", response_model=Course)
-def update_course(course_id: int, course: CourseUpdate):
-    updated = CourseModel.update(course_id, course.dict())
-    if not updated:
+@router.put("/{course_code}", response_model=CourseSchema)
+def update_course(course_code: str, course: CourseUpdate, db: Session = Depends(get_db)):
+    db_course = db.query(Course).filter(Course.course_code == course_code).first()
+    if not db_course:
         raise HTTPException(status_code=404, detail="Course not found")
-    return updated
+    for key, value in course.dict(exclude_unset=True).items():
+        setattr(db_course, key, value)
+    db.commit()
+    db.refresh(db_course)
+    return db_course
 
-@router.delete("/{course_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_course(course_id: int):
-    if not CourseModel.delete(course_id):
+@router.delete("/{course_code}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_course(course_code: str, db: Session = Depends(get_db)):
+    course = db.query(Course).filter(Course.course_code == course_code).first()
+    if not course:
         raise HTTPException(status_code=404, detail="Course not found")
+    db.delete(course)
+    db.commit()
     return
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-
-app.include_router(router)
-

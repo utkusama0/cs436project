@@ -1,35 +1,11 @@
-from typing import List, Optional
+from sqlalchemy import Column, String, Integer, Text
+from database import Base
 
-class CourseModel:
-    _courses: List[dict] = []
-    _id_counter: int = 1
+class Course(Base):
+    __tablename__ = "courses"
 
-    @classmethod
-    def all(cls):
-        return cls._courses
-
-    @classmethod
-    def get(cls, course_id: int) -> Optional[dict]:
-        return next((c for c in cls._courses if c["id"] == course_id), None)
-
-    @classmethod
-    def create(cls, data: dict) -> dict:
-        data["id"] = cls._id_counter
-        cls._id_counter += 1
-        cls._courses.append(data)
-        return data
-
-    @classmethod
-    def update(cls, course_id: int, data: dict) -> Optional[dict]:
-        course = cls.get(course_id)
-        if course:
-            course.update(data)
-        return course
-
-    @classmethod
-    def delete(cls, course_id: int) -> bool:
-        course = cls.get(course_id)
-        if course:
-            cls._courses.remove(course)
-            return True
-        return False
+    course_code = Column(String(10), primary_key=True)
+    name = Column(String(100), nullable=False)
+    department = Column(String(50), nullable=False)
+    credits = Column(Integer, nullable=False)
+    description = Column(Text)

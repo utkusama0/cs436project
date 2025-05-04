@@ -1,15 +1,21 @@
 from pydantic import BaseModel
+from datetime import date
+from typing import Optional
 
 class GradeBase(BaseModel):
-    student_id: int
-    course_id: int
-    grade: str
+    student_id: str
+    course_code: str
+    grade: int
+    semester: str
+    date: date
 
 class GradeCreate(GradeBase):
     pass
 
-class GradeUpdate(GradeBase):
-    pass
+class GradeUpdate(BaseModel):
+    grade: Optional[int] = None
+    semester: Optional[str] = None
+    date: Optional[date] = None
 
 class Grade(GradeBase):
     id: int

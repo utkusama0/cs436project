@@ -1,36 +1,34 @@
 // Backend API endpoint configuration
-const API_BASE_URL = 'http://localhost:8000';
+// When running outside Docker, we need to specify the full URL with port
+const API_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'http://localhost:8000';
 
 // API endpoints
-const endpoints = {
-  // Student endpoints
+const endpoints = {  // Student endpoints
   students: {
-    getAll: `${API_BASE_URL}/students`,
-    getById: (id) => `${API_BASE_URL}/students/${id}`,
-    create: `${API_BASE_URL}/students`,
-    update: (id) => `${API_BASE_URL}/students/${id}`,
-    delete: (id) => `${API_BASE_URL}/students/${id}`,
+    getAll: `${API_BASE_URL}/api/students`,
+    getById: (id) => `${API_BASE_URL}/api/students/${id}`,
+    create: `${API_BASE_URL}/api/students`,
+    update: (id) => `${API_BASE_URL}/api/students/${id}`,
+    delete: (id) => `${API_BASE_URL}/api/students/${id}`,
   },
-  
-  // Course endpoints
+    // Course endpoints
   courses: {
-    getAll: `${API_BASE_URL}/courses`,
-    getById: (id) => `${API_BASE_URL}/courses/${id}`,
-    create: `${API_BASE_URL}/courses`,
-    update: (id) => `${API_BASE_URL}/courses/${id}`,
-    delete: (id) => `${API_BASE_URL}/courses/${id}`,
+    getAll: `${API_BASE_URL}/api/courses`,
+    getById: (id) => `${API_BASE_URL}/api/courses/${id}`,
+    create: `${API_BASE_URL}/api/courses`,
+    update: (id) => `${API_BASE_URL}/api/courses/${id}`,
+    delete: (id) => `${API_BASE_URL}/api/courses/${id}`,
   },
-  
-  // Grade endpoints
+    // Grade endpoints
   grades: {
-    getAll: `${API_BASE_URL}/grades`,
-    getByStudentId: (studentId) => `${API_BASE_URL}/grades?student_id=${studentId}`,
-    getByCourseCode: (courseCode) => `${API_BASE_URL}/grades?course_code=${courseCode}`,
+    getAll: `${API_BASE_URL}/api/grades`,
+    getByStudentId: (studentId) => `${API_BASE_URL}/api/grades?student_id=${studentId}`,
+    getByCourseCode: (courseCode) => `${API_BASE_URL}/api/grades?course_code=${courseCode}`,
     getByStudentAndCourse: (studentId, courseCode) => 
-      `${API_BASE_URL}/grades?student_id=${studentId}&course_code=${courseCode}`,
-    create: `${API_BASE_URL}/grades`,
-    update: (id) => `${API_BASE_URL}/grades/${id}`,
-    delete: (id) => `${API_BASE_URL}/grades/${id}`,
+      `${API_BASE_URL}/api/grades?student_id=${studentId}&course_code=${courseCode}`,
+    create: `${API_BASE_URL}/api/grades`,
+    update: (id) => `${API_BASE_URL}/api/grades/${id}`,
+    delete: (id) => `${API_BASE_URL}/api/grades/${id}`,
   },
 };
 

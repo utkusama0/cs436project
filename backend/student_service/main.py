@@ -1,11 +1,16 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from typing import List
+from typing import List, Dict
 from sqlalchemy.orm import Session
-from .schemas import Student as StudentSchema, StudentCreate, StudentUpdate
-from .models import Student
+from schemas import Student as StudentSchema, StudentCreate, StudentUpdate
+from models import Student
 from database import get_db
 
 router = APIRouter()
+
+@router.get("/health", response_model=Dict[str, str])
+def health_check():
+    """Health check endpoint for Kubernetes readiness probes"""
+    return {"status": "healthy"}
 
 @router.get("/", response_model=List[StudentSchema])
 def list_students(db: Session = Depends(get_db)):

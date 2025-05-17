@@ -1,0 +1,101 @@
+# c:\okul\cs436\project\cs436project\docker-compose.yml
+version: '3'
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: student_management
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/scripts/scripts.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network  
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+      
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      student-service:
+        condition: service_started
+      course-service:
+        condition: service_started
+      grade-service:
+        condition: service_started
+    networks:
+      - app-network
+           
+  student-service:
+    build:
+      context: ./backend/student_service
+    ports:
+      - "8081:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:123456@postgres:5432/student_management
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+  course-service:
+    build:
+      context: ./backend/course_service
+    ports:
+      - "8082:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:123456@postgres:5432/student_management
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+      
+  grade-service:
+    build:
+      context: ./backend/grade_service
+    ports:
+      - "8083:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:123456@postgres:5432/student_management
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge

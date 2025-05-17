@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: student-management
+data:
+  REDIS_URL: "redis://redis-service:6379/0"
+  PDF_GEN_URL: "https://us-central1-student-management-system.cloudfunctions.net/pdf-generator"
+  EMAIL_NOTIFY_URL: "https://us-central1-student-management-system.cloudfunctions.net/email-notifier"

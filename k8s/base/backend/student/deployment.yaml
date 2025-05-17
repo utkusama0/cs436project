@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-service
+  namespace: student-management
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: student-service
+  template:
+    metadata:
+      labels:
+        app: student-service
+    spec:
+      containers:
+      - name: student-service
+        image: gcr.io/student-management-system/student-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+          # Values referenced from db-credentials secret
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: REDIS_URL
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        envFrom:
+        - secretRef:
+            name: db-credentials
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10

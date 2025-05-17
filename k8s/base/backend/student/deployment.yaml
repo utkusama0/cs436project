@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-service
+  namespace: student-management
+  labels:
+    app: student-service
+spec:
+  replicas: 1 # Kustomize overlay'lerde ezilebilir
+  selector:
+    matchLabels:
+      app: student-service
+  template:
+    metadata:
+      labels:
+        app: student-service
+    spec:
+      containers:
+      - name: student-service
+        image: gcr.io/[PROJECT_ID]/student-service:latest # Student Service Docker imajı
+        ports:
+        - containerPort: 8003 # Student Service'in çalıştığı port
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: db-credentials
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+          requests:
+            cpu: "250m"
+            memory: "128Mi"

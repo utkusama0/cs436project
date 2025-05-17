@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base # base klasörünü referans alır
+
+# Namespace'i geliştirme ortamına özgü olarak değiştirebilirsiniz
+# namespace: student-management-dev
+
+# Patch'ler veya stratejik merge patch'ler buraya eklenebilir
+# Örnek: Dev ortamında replika sayılarını azaltmak için
+# patches:
+# - patch: |-
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     metadata:
+#       name: frontend-deployment
+#     spec:
+#       replicas: 1
+#   target:
+#     kind: Deployment
+#     name: frontend-deployment
+# - patch: |-
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     metadata:
+#       name: course-service
+#     spec:
+#       replicas: 1
+#   target:
+#     kind: Deployment
+#     name: course-service
+# # Diğer servisler için patch'ler...
+
+# Image tag'lerini dev ortamına uygun olarak değiştirmek için
+# images:
+# - name: gcr.io/[PROJECT_ID]/frontend
+#   newTag: dev-latest # Dev imaj tag'i
+# - name: gcr.io/[PROJECT_ID]/course-service
+#   newTag: dev-latest
+# # Diğer servis imajları...

@@ -1,0 +1,1 @@
+apiVersion: v1\nkind: ConfigMap\metadata:\n  name: app-config\n  namespace: student-management\ndata:\n  BACKEND_API_URL: "http://backend-service" # Kubernetes Service adı üzerinden erişim\n  REDIS_HOST: "redis-service"\n  REDIS_PORT: "6379"\n  # Diğer uygulama konfigürasyonları...\n

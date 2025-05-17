@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-service
+  namespace: student-management
+  labels:
+    app: grade-service
+spec:
+  replicas: 1 # Kustomize overlay'lerde ezilebilir
+  selector:
+    matchLabels:
+      app: grade-service
+  template:
+    metadata:
+      labels:
+        app: grade-service
+    spec:
+      containers:
+      - name: grade-service
+        image: gcr.io/[PROJECT_ID]/grade-service:latest # Grade Service Docker imajı
+        ports:
+        - containerPort: 8002 # Grade Service'in çalıştığı port
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: db-credentials
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+          requests:
+            cpu: "250m"
+            memory: "128Mi"

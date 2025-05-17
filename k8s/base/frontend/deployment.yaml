@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: student-management
+  labels:
+    app: frontend
+spec:
+  replicas: 2 # Kustomize overlay'lerde ezilebilir
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/[PROJECT_ID]/frontend:latest # Frontend Docker imajı
+        ports:
+        - containerPort: 80 # Frontend'in çalıştığı port (Nginx varsayılanı)
+        resources:
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
+          requests:
+            cpu: "150m"
+            memory: "128Mi"

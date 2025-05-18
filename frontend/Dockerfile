@@ -13,6 +13,9 @@ RUN npm install
 # Copy project files
 COPY student-management-ui/ ./
 
+# Set build-time environment variable for the backend URL
+ENV BACKEND_URL=""
+
 # Build the project
 RUN npm run build
 

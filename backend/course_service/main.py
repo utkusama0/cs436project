@@ -20,7 +20,6 @@ def list_courses(db: Session = Depends(get_db)):
             "description": course.description,
             "credits": course.credits,
             "department": course.department,
-            "prerequisites": course.prerequisites,
         })
     return courses_data
 

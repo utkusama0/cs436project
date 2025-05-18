@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
 from typing import List
 from sqlalchemy.orm import Session
 from .schemas import Student as StudentSchema, StudentCreate, StudentUpdate
 from .models import Student
 from database import get_db
 
+app = FastAPI()
 router = APIRouter()
 
 @router.get("/", response_model=List[StudentSchema])
@@ -59,3 +60,6 @@ def delete_student(student_id: str, db: Session = Depends(get_db)):
     db.delete(student)
     db.commit()
     return
+
+# Mount the router
+app.include_router(router, prefix="/students", tags=["students"])

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
 from typing import List
 from sqlalchemy.orm import Session
 from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate
 from .models import Grade
 from database import get_db
 
+app = FastAPI()
 router = APIRouter()
 
 @router.get("/", response_model=List[GradeSchema])
@@ -57,3 +58,6 @@ def delete_grade(grade_id: int, db: Session = Depends(get_db)):
     db.delete(grade)
     db.commit()
     return
+
+# Mount the router
+app.include_router(router, prefix="/grades", tags=["grades"])

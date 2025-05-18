@@ -1,5 +1,5 @@
 import functions_framework
-from flask import jsonify
+from flask import jsonify, Response
 import requests
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -85,8 +85,10 @@ def generate_transcript(request):
     # Get PDF content
     pdf_content = buffer.getvalue()
     buffer.close()
-    
-    return jsonify({
-        'pdf_content': pdf_content.decode('latin1'),
-        'filename': f'transcript_{student_id}.pdf'
-    })
+
+    # Instead of jsonify, return the raw bytes with correct headers
+    return Response(
+        pdf_content,
+        mimetype='application/pdf',
+        headers={'Content-Disposition': f'attachment;filename=transcript_{student_id}.pdf'}
+    )

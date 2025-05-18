@@ -1,9 +1,10 @@
 from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
 from typing import List
-from sqlalchemy.orm import Session
-from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate
+from sqlalchemy.orm import Session, joinedload
+from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate, TranscriptEntry, CourseDetails
 from .models import Grade
 from database import get_db
+from ..course_service.models import Course
 
 app = FastAPI()
 router = APIRouter()
@@ -58,6 +59,40 @@ def delete_grade(grade_id: int, db: Session = Depends(get_db)):
     db.delete(grade)
     db.commit()
     return
+
+# New endpoint to fetch student transcript
+@router.get("/student/{student_id}/transcript", response_model=List[TranscriptEntry])
+def get_student_transcript(student_id: str, db: Session = Depends(get_db)):
+    transcript_data = (
+        db.query(Grade, Course)
+        .join(Course, Grade.course_code == Course.course_code)
+        .filter(Grade.student_id == student_id)
+        .all()
+    )
+
+    if not transcript_data:
+        # Optionally return 404 if student or grades not found
+        # raise HTTPException(status_code=404, detail="Transcript data not found for this student")
+        return [] # Return empty list if no grades found
+
+    # Structure the data for the response (will be based on the new schema)
+    formatted_transcript = []
+    for grade, course in transcript_data:
+        formatted_transcript.append(TranscriptEntry(
+            grade_id=grade.id,
+            semester=grade.semester,
+            grade_value=grade.grade,
+            grade_date=grade.date,
+            course=CourseDetails(
+                course_code=course.course_code,
+                course_name=course.name,
+                credits=course.credits,
+                department=course.department,
+                description=course.description,
+            )
+        ))
+
+    return formatted_transcript
 
 # Mount the router
 app.include_router(router, prefix="/grades", tags=["grades"])

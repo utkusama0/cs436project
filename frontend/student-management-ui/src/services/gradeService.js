@@ -27,7 +27,7 @@ const gradeService = {  // Get all grades
   // Get grades by student ID
   getGradesByStudentId: async (studentId) => {
     try {
-      const response = await axios.get(endpoints.grades.getByStudentId(studentId));
+      const response = await axios.get(`${endpoints.grades.getAll}/student/${studentId}/transcript`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching grades for student ${studentId}:`, error);

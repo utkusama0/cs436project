@@ -22,3 +22,25 @@ class Grade(GradeBase):
 
     class Config:
         orm_mode = True
+
+# New schema for Course details within a transcript entry
+class CourseDetails(BaseModel):
+    course_code: str
+    course_name: str # Assuming 'name' in model maps to 'course_name' in schema/frontend
+    credits: int
+    department: str
+    description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+# New schema for a single transcript entry (Grade with nested Course details)
+class TranscriptEntry(BaseModel):
+    grade_id: int
+    semester: str
+    grade_value: int # Renamed to avoid conflict with nested course grade if any
+    grade_date: date # Renamed for clarity
+    course: CourseDetails
+
+    class Config:
+        orm_mode = True

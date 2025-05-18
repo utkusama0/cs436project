@@ -10,5 +10,6 @@ spec:
     app: course-service
   ports:
   - protocol: TCP
-    port: 8001 # Cluster içi erişim portu
-    targetPort: 8001 # Container portu
+    port: 8080 # Service port
+    targetPort: 8080 # Container port
+  type: ClusterIP # Expose service within the cluster

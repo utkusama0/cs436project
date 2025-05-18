@@ -1,21 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: main-ingress
+  name: api-gateway-ingress
   namespace: student-management
   annotations:
     # Google Cloud Ingress Controller için annotation'lar
-    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.class: nginx
     # Backend servisi için timeout ayarı (isteğe bağlı)
     # ingress.gce.kubernetes.io/backend-timeout: "60s"
     # Eğer global statik IP kullanacaksanız:
     # kubernetes.io/ingress.global-static-ip-name: YOUR_STATIC_IP_NAME
+    # Add any other necessary annotations for SSL, etc.
 spec:
-  defaultBackend: # Varsayılan backend (genellikle frontend)
-    service:
-      name: frontend-service
-      port:
-        number: 80
   rules:
   - http:
       paths:
@@ -28,14 +24,24 @@ spec:
             port:
               number: 80
       # Backend API trafiği - API Gateway rolü görebilir
-      - path: /api # Backend API'lerinizin başladığı path
+      - path: /students
         pathType: Prefix
         backend:
-          # Eğer ayrı bir API Gateway deployment'ınız varsa onu buraya yönlendirin
-          # Aksi takdirde, backend servislerine ayrı ayrı veya tek bir backend service'e yönlendirebilirsiniz.
-          # Mikroservis yapısında API Gateway genellikle ayrı bir deployment ve service olur.
-          # Basitlik için tek backend service'e yönlendirme:
           service:
-            name: backend-service # Veya API Gateway Service adı
+            name: student-service
             port:
-              number: 80 # Backend Service'in Ingress'ten alacağı port
+              number: 8080
+      - path: /courses
+        pathType: Prefix
+        backend:
+          service:
+            name: course-service
+            port:
+              number: 8080
+      - path: /grades
+        pathType: Prefix
+        backend:
+          service:
+            name: grade-service
+            port:
+              number: 8080

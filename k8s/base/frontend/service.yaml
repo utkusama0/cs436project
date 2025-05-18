@@ -12,3 +12,4 @@ spec:
   - protocol: TCP
     port: 80 # Cluster içi erişim portu
     targetPort: 80 # Container portu
+  type: ClusterIP

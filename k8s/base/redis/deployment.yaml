@@ -10,8 +10,12 @@ spec:
   selector:
     matchLabels:
       app: redis
+  strategy: {}
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "$(date +%Y%m%d%H%M%S)"
+      creationTimestamp: null
       labels:
         app: redis
     spec:

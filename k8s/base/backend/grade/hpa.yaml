@@ -8,10 +8,12 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: grade-service
-  minReplicas: 1
-  maxReplicas: 5 # Kustomize overlay'lerde ezilebilir
+  minReplicas: 2
+  maxReplicas: 5
   metrics:
   - type: Resource
     resource:
       name: cpu
-      averageUtilization: 60
+      target:
+        type: Utilization
+        averageUtilization: 50

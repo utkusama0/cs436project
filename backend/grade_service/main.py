@@ -9,7 +9,19 @@ router = APIRouter()
 
 @router.get("/", response_model=List[GradeSchema])
 def list_grades(db: Session = Depends(get_db)):
-    return db.query(Grade).all()
+    grades = db.query(Grade).all()
+    # Explicitly convert SQLAlchemy models to dictionaries
+    grades_data = []
+    for grade in grades:
+        grades_data.append({
+            "id": grade.id,
+            "student_id": grade.student_id,
+            "course_code": grade.course_code,
+            "semester": grade.semester,
+            "grade": grade.grade,
+            "date": grade.date,
+        })
+    return grades_data
 
 @router.post("/", response_model=GradeSchema, status_code=status.HTTP_201_CREATED)
 def create_grade(grade: GradeCreate, db: Session = Depends(get_db)):

@@ -9,7 +9,19 @@ router = APIRouter()
 
 @router.get("/", response_model=List[CourseSchema])
 def list_courses(db: Session = Depends(get_db)):
-    return db.query(Course).all()
+    courses = db.query(Course).all()
+    # Explicitly convert SQLAlchemy models to dictionaries
+    courses_data = []
+    for course in courses:
+        courses_data.append({
+            "course_code": course.course_code,
+            "name": course.name,
+            "description": course.description,
+            "credits": course.credits,
+            "department": course.department,
+            "prerequisites": course.prerequisites,
+        })
+    return courses_data
 
 @router.post("/", response_model=CourseSchema, status_code=status.HTTP_201_CREATED)
 def create_course(course: CourseCreate, db: Session = Depends(get_db)):

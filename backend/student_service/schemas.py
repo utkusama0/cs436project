@@ -24,4 +24,4 @@ class StudentUpdate(BaseModel):
 
 class Student(StudentBase):
     class Config:
-        from_attributes = True
+        orm_mode = True

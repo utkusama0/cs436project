@@ -10,10 +10,11 @@ COPY ../database.py .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy service-specific files
-COPY . .
+# Copy the entire service directory to /app/<service_name>
+COPY . /app/grade_service
 
-# Set PYTHONPATH to allow relative imports
+# Set PYTHONPATH to include the parent directory of the package
 ENV PYTHONPATH=/app
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Run the application using the package path
+CMD ["uvicorn", "grade_service.main:app", "--host", "0.0.0.0", "--port", "8080"]

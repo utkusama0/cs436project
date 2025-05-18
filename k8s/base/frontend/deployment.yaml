@@ -22,7 +22,7 @@ spec:
         - containerPort: 80 # Frontend'in çalıştığı port (Nginx varsayılanı)
         env:
         - name: BACKEND_URL
-          value: ""
+          value: "http://34.29.190.192"  # Ingress controller's IP address
         resources:
           limits:
             cpu: "300m"

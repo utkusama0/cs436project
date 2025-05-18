@@ -20,6 +20,9 @@ spec:
         image: gcr.io/cs436termproject-460018/frontend:latest # Frontend Docker imajı
         ports:
         - containerPort: 80 # Frontend'in çalıştığı port (Nginx varsayılanı)
+        env:
+        - name: BACKEND_URL
+          value: ""
         resources:
           limits:
             cpu: "300m"

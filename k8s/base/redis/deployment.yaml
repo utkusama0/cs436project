@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-deployment
-  namespace: student-management
-  labels:
-    app: redis
+  name: redis
+  namespace: cs436-project
 spec:
-  replicas: 1 # Kustomize overlay'lerde ezilebilir
+  replicas: 1
   selector:
     matchLabels:
       app: redis
-  strategy: {}
   template:
     metadata:
-      annotations:
-        kubectl.kubernetes.io/restartedAt: "$(date +%Y%m%d%H%M%S)"
-      creationTimestamp: null
       labels:
         app: redis
     spec:
       containers:
       - name: redis
-        image: redis:latest # Redis imajı
+        image: redis:7.0-alpine
         ports:
         - containerPort: 6379
         resources:
-          limits:
-            cpu: "100m"
-            memory: "128Mi"
           requests:
-            cpu: "50m"
-            memory: "64Mi"
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        emptyDir: {}

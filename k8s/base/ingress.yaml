@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-gateway-ingress
-  namespace: student-management
+  namespace: cs436-project
   annotations:
     # Google Cloud Ingress Controller için annotation'lar
     kubernetes.io/ingress.class: nginx
@@ -30,18 +30,18 @@ spec:
           service:
             name: student-service
             port:
-              number: 8080
+              number: 80
       - path: /courses
         pathType: Prefix
         backend:
           service:
             name: course-service
             port:
-              number: 8080
+              number: 80
       - path: /grades
         pathType: Prefix
         backend:
           service:
             name: grade-service
             port:
-              number: 8080
+              number: 80

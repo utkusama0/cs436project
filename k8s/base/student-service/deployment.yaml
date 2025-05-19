@@ -29,6 +29,10 @@ spec:
           value: "12345678"
         - name: DB_NAME
           value: "student_management"
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"
         resources:
           requests:
             memory: "256Mi"

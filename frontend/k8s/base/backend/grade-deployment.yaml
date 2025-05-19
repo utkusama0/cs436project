@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grade-service
-  namespace: cs436project
 spec:
   replicas: 1
   selector:
@@ -24,10 +23,15 @@ spec:
             secretKeyRef:
               name: db-secrets
               key: database-url
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grade-service
+spec:
+  selector:
+    app: grade-service
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP

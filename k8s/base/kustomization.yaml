@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - namespace.yaml
 - configmaps/app-config.yaml
-- secrets/db-credentials.yaml # Dikkat: hassas bilgi içerir, yönetimi önemlidir
+- secrets/db-credentials.yaml
 - backend/course/deployment.yaml
 - backend/course/hpa.yaml
 - backend/course/service.yaml
@@ -19,4 +19,3 @@ resources:
 - redis/deployment.yaml
 - redis/service.yaml
 - ingress.yaml
-# Ek base kaynakları buraya eklenebilir 

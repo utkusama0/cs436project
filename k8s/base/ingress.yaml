@@ -1,33 +1,34 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: cs436-ingress
+  name: api-gateway-ingress
+  namespace: student-management
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # Google Cloud Ingress Controller için annotation'lar
+    kubernetes.io/ingress.class: nginx
+    # Backend servisi için timeout ayarı (isteğe bağlı)
+    # ingress.gce.kubernetes.io/backend-timeout: "60s"
+    # Eğer global statik IP kullanacaksanız:
+    # kubernetes.io/ingress.global-static-ip-name: YOUR_STATIC_IP_NAME
+    # Add any other necessary annotations for SSL, etc.
 spec:
   rules:
   - http:
       paths:
+      # Frontend trafiği
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: frontend
+            name: frontend-service
             port:
               number: 80
+      # Backend API trafiği - API Gateway rolü görebilir
       - path: /students
         pathType: Prefix
         backend:
           service:
             name: student-service
-            port:
-              number: 80
-      - path: /grades
-        pathType: Prefix
-        backend:
-          service:
-            name: grade-service
             port:
               number: 80
       - path: /courses
@@ -37,3 +38,11 @@ spec:
             name: course-service
             port:
               number: 80
+      - path: /grades
+        pathType: Prefix
+        backend:
+          service:
+            name: grade-service
+            port:
+              number: 80
+

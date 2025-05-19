@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis
+  name: grade-service
   namespace: cs436-project
 spec:
   selector:
-    app: redis
+    app: grade-service
   ports:
     - protocol: TCP
-      port: 6379
-      targetPort: 6379
-  type: ClusterIP
+      port: 80
+      targetPort: 8082
+  type: ClusterIP 

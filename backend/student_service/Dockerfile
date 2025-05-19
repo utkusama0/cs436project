@@ -3,18 +3,26 @@ FROM python:3.9-slim
 # Set the working directory
 WORKDIR /app
 
-# Copy files from parent directory first
-COPY ../requirements.txt .
+# Copy requirements and database files
+COPY requirements.txt .
 COPY ../database.py .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire service directory to /app/<service_name>
-COPY . /app/student_service
+# Copy the service files
+COPY . .
 
-# Set PYTHONPATH to include the parent directory of the package
+# Set environment variables
 ENV PYTHONPATH=/app
+ENV DB_HOST=10.128.0.2
+ENV DB_PORT=5432
+ENV DB_USER=postgres
+ENV DB_PASSWORD=12345678
+ENV DB_NAME=student_management
 
-# Run the application using the package path
-CMD ["uvicorn", "student_service.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Expose the port
+EXPOSE 8080
+
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

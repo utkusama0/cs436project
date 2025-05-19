@@ -47,12 +47,16 @@ def notify_grade_update(request):
     
     course = course_response.json()
     
-    # Get grade data
-    grade_response = requests.get(f"{os.environ.get('GRADE_SERVICE_URL')}/student/{student_id}/transcript")
-    if grade_response.status_code != 200:
-        return jsonify({'error': 'Failed to fetch grade'}), 500
+    # Get grade data (using the transcript endpoint to get nested course info)
+    # Use the query parameter endpoint as confirmed by backend logs
+    transcript_response = requests.get(
+        f"{os.environ.get('GRADE_SERVICE_URL')}?student_id={student_id}"
+    )
+    if transcript_response.status_code != 200:
+        print(f"Error fetching transcript for student {student_id}: Status Code {transcript_response.status_code}, Response: {transcript_response.text}")
+        return jsonify({'error': 'Failed to fetch grade data for notification'}), transcript_response.status_code # More specific error message
     
-    grades = grade_response.json()
+    grades = transcript_response.json()
     grade = next((g for g in grades if g['course']['course_code'] == course_code), None)
     
     if not grade:

@@ -34,9 +34,14 @@ def generate_transcript(request):
     student = student_response.json()
     
     # Get transcript data from grade service
-    transcript_response = requests.get(f"{os.environ.get('GRADE_SERVICE_URL')}/student/{student_id}/transcript")
+    # Use the query parameter endpoint as confirmed by backend logs
+    transcript_response = requests.get(
+        f"{os.environ.get('GRADE_SERVICE_URL')}?student_id={student_id}"
+    )
     if transcript_response.status_code != 200:
-        return jsonify({'error': 'Failed to fetch transcript'}), 500
+        # Log the status code and response for debugging
+        print(f"Error fetching transcript for student {student_id}: Status Code {transcript_response.status_code}, Response: {transcript_response.text}")
+        return jsonify({'error': 'Failed to fetch transcript'}), transcript_response.status_code # Return backend status if non-200
     
     transcript = transcript_response.json()
     

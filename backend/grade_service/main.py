@@ -15,9 +15,18 @@ app = FastAPI()
 router = APIRouter()
 
 @router.get("/", response_model=List[GradeSchema])
-def list_grades(db: Session = Depends(get_db)):
+def list_grades(
+    student_id: str = None,
+    course_code: str = None,
+    db: Session = Depends(get_db)
+):
     try:
-        grades = db.query(Grade).all()
+        query = db.query(Grade)
+        if student_id:
+            query = query.filter(Grade.student_id == student_id)
+        if course_code:
+            query = query.filter(Grade.course_code == course_code)
+        grades = query.all()
         grades_data = []
         for grade in grades:
             grades_data.append({

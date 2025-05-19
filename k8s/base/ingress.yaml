@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-gateway-ingress
-  namespace: cs436-project
+  namespace: student-management
   annotations:
     # Google Cloud Ingress Controller için annotation'lar
     kubernetes.io/ingress.class: nginx

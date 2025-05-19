@@ -71,16 +71,16 @@ def notify_grade_update(request):
     msg = MIMEMultipart()
     msg['From'] = smtp_username
     msg['To'] = student['email']
-    msg['Subject'] = f"Grade Update - {course['name']}"
+    msg['Subject'] = f"Grade Update - {course['course_name']}"
     
     body = f"""
-    Dear {student['name']},
+    Dear {student['first_name']} {student['last_name']},
     
-    Your grade for {course['name']} ({course_code}) has been updated.
+    Your grade for {course['course_name']} ({course_code}) has been updated.
     
     Course Details:
     - Course Code: {course_code}
-    - Course Name: {course['name']}
+    - Course Name: {course['course_name']}
     - Credits: {course['credits']}
     - Department: {course['department']}
     

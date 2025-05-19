@@ -54,7 +54,7 @@ def generate_transcript(request):
     # Add header
     elements.append(Paragraph(f"Academic Transcript", styles['Title']))
     elements.append(Paragraph(f"Student ID: {student_id}", styles['Normal']))
-    elements.append(Paragraph(f"Name: {student['name']}", styles['Normal']))
+    elements.append(Paragraph(f"Name: {student['first_name']} {student['last_name']}", styles['Normal']))
     elements.append(Paragraph(f"Department: {student['department']}", styles['Normal']))
     elements.append(Paragraph("", styles['Normal']))  # Spacing
     

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate, TranscriptEntry, CourseDetails
 from .models import Grade
 from database import get_db
-from ..course_service.models import Course
+from course_service.models import Course
 import logging
 
 # Configure logging

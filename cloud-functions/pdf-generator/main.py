@@ -44,9 +44,6 @@ def generate_transcript(request):
     
     transcript = transcript_response.json()
     
-    if not transcript:
-        return jsonify({'error': 'No transcript data found for this student'}), 404
-    
     # Create PDF
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
@@ -56,50 +53,60 @@ def generate_transcript(request):
     # Add header
     elements.append(Paragraph(f"Academic Transcript", styles['Title']))
     elements.append(Paragraph(f"Student ID: {student_id}", styles['Normal']))
-    elements.append(Paragraph(f"Name: {student['first_name']} {student['last_name']}", styles['Normal']))
-    elements.append(Paragraph(f"Email: {student['email']}", styles['Normal']))
-    elements.append(Paragraph(f"Enrollment Date: {student['enrollment_date']}", styles['Normal']))
+    elements.append(Paragraph(
+        f"Name: {student.get('first_name', 'N/A')} {student.get('last_name', '')}", 
+        styles['Normal']
+    ))
+    elements.append(Paragraph(f"Email: {student.get('email', 'N/A')}", styles['Normal']))
+    elements.append(Paragraph(f"Enrollment Date: {student.get('enrollment_date', 'N/A')}", styles['Normal']))
     elements.append(Paragraph("", styles['Normal']))  # Spacing
     
     # Create transcript table
     data = [['Course Code', 'Course Name', 'Credits', 'Grade', 'Semester']]
-    for entry in transcript:
-        try:
-            data.append([
-                entry['course']['course_code'],
-                entry['course']['course_name'],
-                str(entry['course']['credits']),
-                str(entry['grade_value']),
-                entry['semester']
-            ])
-        except KeyError as e:
-            print(f"Missing field in transcript entry: {e}")
-            continue
     
-    if len(data) == 1:  # Only header row
-        elements.append(Paragraph("No courses found in transcript", styles['Normal']))
+    if not transcript:
+        elements.append(Paragraph("No courses found in transcript.", styles['Normal']))
     else:
-        table = Table(data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 14),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 12),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-        elements.append(table)
+        for entry in transcript:
+            try:
+                course = entry.get('course', {})
+                data.append([
+                    course.get('course_code', 'N/A'),
+                    course.get('course_name', 'N/A'),
+                    str(course.get('credits', 'N/A')),
+                    str(entry.get('grade_value', 'N/A')),
+                    entry.get('semester', 'N/A')
+                ])
+            except Exception as e:
+                print(f"Error processing transcript entry: {e}")
+                continue
+        
+        if len(data) > 1:  # More than just header row
+            table = Table(data)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 14),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 1), (-1, -1), 12),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            elements.append(table)
     
     # Add footer with generation date
     elements.append(Paragraph("", styles['Normal']))  # Spacing
     elements.append(Paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", styles['Normal']))
     
-    doc.build(elements)
+    try:
+        doc.build(elements)
+    except Exception as e:
+        print(f"Error building PDF: {e}")
+        return jsonify({'error': 'Error generating PDF'}), 500
     
     # Get PDF content
     pdf_content = buffer.getvalue()

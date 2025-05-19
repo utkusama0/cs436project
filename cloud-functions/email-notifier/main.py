@@ -34,21 +34,21 @@ def notify_grade_update(request):
     course_code = request_json['course_code']
     
     # Get student data
-    student_response = requests.get(f"{os.environ.get('STUDENT_SERVICE_URL')}/students/{student_id}")
+    student_response = requests.get(f"{os.environ.get('STUDENT_SERVICE_URL')}/{student_id}")
     if student_response.status_code != 200:
         return jsonify({'error': 'Student not found'}), 404
     
     student = student_response.json()
     
     # Get course data
-    course_response = requests.get(f"{os.environ.get('COURSE_SERVICE_URL')}/courses/{course_code}")
+    course_response = requests.get(f"{os.environ.get('COURSE_SERVICE_URL')}/{course_code}")
     if course_response.status_code != 200:
         return jsonify({'error': 'Course not found'}), 404
     
     course = course_response.json()
     
     # Get grade data
-    grade_response = requests.get(f"{os.environ.get('GRADE_SERVICE_URL')}/grades/student/{student_id}/transcript")
+    grade_response = requests.get(f"{os.environ.get('GRADE_SERVICE_URL')}/student/{student_id}/transcript")
     if grade_response.status_code != 200:
         return jsonify({'error': 'Failed to fetch grade'}), 500
     

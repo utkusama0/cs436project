@@ -27,14 +27,14 @@ def generate_transcript(request):
     student_id = request_json['student_id']
     
     # Get student data from student service
-    student_response = requests.get(f"{os.environ.get('STUDENT_SERVICE_URL')}/students/{student_id}")
+    student_response = requests.get(f"{os.environ.get('STUDENT_SERVICE_URL')}/{student_id}")
     if student_response.status_code != 200:
         return jsonify({'error': 'Student not found'}), 404
     
     student = student_response.json()
     
     # Get transcript data from grade service
-    transcript_response = requests.get(f"{os.environ.get('GRADE_SERVICE_URL')}/grades/student/{student_id}/transcript")
+    transcript_response = requests.get(f"{os.environ.get('GRADE_SERVICE_URL')}/student/{student_id}/transcript")
     if transcript_response.status_code != 200:
         return jsonify({'error': 'Failed to fetch transcript'}), 500
     

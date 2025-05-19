@@ -16,8 +16,8 @@ router = APIRouter()
 
 @router.get("/", response_model=List[GradeSchema])
 def list_grades(
-    student_id: str = None,
-    course_code: str = None,
+    student_id: Optional[str] = Query(None),
+    course_code: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
     try:

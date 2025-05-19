@@ -1,16 +1,16 @@
-from sqlalchemy import Column, String, Integer, Date, ForeignKey, CheckConstraint
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, CheckConstraint
 from database import Base
 
 class Grade(Base):
     __tablename__ = "grades"
 
-    id = Column(Integer, primary_key=True)
-    student_id = Column(String(10), ForeignKey('students.student_id'))
-    course_code = Column(String(10), ForeignKey('courses.course_code'))
-    grade = Column(Integer, nullable=False)
-    semester = Column(String(20), nullable=False)
-    date = Column(Date, nullable=False)
+    grade_id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(String, index=True)
+    course_code = Column(String, index=True)
+    grade_value = Column(Integer)
+    semester = Column(String)
+    grade_date = Column(Date)
 
     __table_args__ = (
-        CheckConstraint('grade >= 0 AND grade <= 100', name='check_grade_range'),
+        CheckConstraint('grade_value >= 0 AND grade_value <= 100', name='check_grade_range'),
     )

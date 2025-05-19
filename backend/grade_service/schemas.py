@@ -5,20 +5,20 @@ from typing import Optional
 class GradeBase(BaseModel):
     student_id: str
     course_code: str
-    grade: int
+    grade_value: int
     semester: str
-    date: date
+    grade_date: date
 
 class GradeCreate(GradeBase):
     pass
 
 class GradeUpdate(BaseModel):
-    grade: Optional[int] = None
+    grade_value: Optional[int] = None
     semester: Optional[str] = None
-    date: Optional[date] = None
+    grade_date: Optional[date] = None
 
 class Grade(GradeBase):
-    id: int
+    grade_id: int
 
     class Config:
         orm_mode = True

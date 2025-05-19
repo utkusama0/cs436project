@@ -6,6 +6,7 @@ from google.cloud import secretmanager
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from datetime import datetime
 
 def get_secret(project_id, secret_id, version_id="latest"):
     """Access the secret version."""
@@ -40,62 +41,65 @@ def notify_grade_update(request):
     
     student = student_response.json()
     
-    # Get course data
-    course_response = requests.get(f"{os.environ.get('COURSE_SERVICE_URL')}/{course_code}")
-    if course_response.status_code != 200:
-        return jsonify({'error': 'Course not found'}), 404
-    
-    course = course_response.json()
-    
-    # Get grade data (using the transcript endpoint to get nested course info)
-    # Use the query parameter endpoint as confirmed by backend logs
+    # Get transcript data
     transcript_response = requests.get(
-        f"{os.environ.get('GRADE_SERVICE_URL')}?student_id={student_id}"
+        f"{os.environ.get('GRADE_SERVICE_URL')}/student/{student_id}/transcript"
     )
     if transcript_response.status_code != 200:
         print(f"Error fetching transcript for student {student_id}: Status Code {transcript_response.status_code}, Response: {transcript_response.text}")
-        return jsonify({'error': 'Failed to fetch grade data for notification'}), transcript_response.status_code # More specific error message
+        return jsonify({'error': 'Failed to fetch grade data for notification'}), transcript_response.status_code
     
-    grades = transcript_response.json()
-    grade = next((g for g in grades if g['course']['course_code'] == course_code), None)
+    transcript = transcript_response.json()
     
-    if not grade:
-        return jsonify({'error': 'Grade not found'}), 404
+    if not transcript:
+        return jsonify({'error': 'No transcript data found for this student'}), 404
     
-    # Get email credentials from Secret Manager
-    project_id = os.environ.get('PROJECT_ID')
-    smtp_username = get_secret(project_id, 'smtp-username')
-    smtp_password = get_secret(project_id, 'smtp-password')
+    # Find the specific grade entry
+    grade_entry = next((g for g in transcript if g['course']['course_code'] == course_code), None)
     
-    # Create email message
-    msg = MIMEMultipart()
-    msg['From'] = smtp_username
-    msg['To'] = student['email']
-    msg['Subject'] = f"Grade Update - {course['course_name']}"
+    if not grade_entry:
+        return jsonify({'error': 'Grade not found for this course'}), 404
     
-    body = f"""
-    Dear {student['first_name']} {student['last_name']},
-    
-    Your grade for {course['course_name']} ({course_code}) has been updated.
-    
-    Course Details:
-    - Course Code: {course_code}
-    - Course Name: {course['course_name']}
-    - Credits: {course['credits']}
-    - Department: {course['department']}
-    
-    Grade Information:
-    - Grade: {grade['grade_value']}
-    - Semester: {grade['semester']}
-    
-    Best regards,
-    Student Management System
-    """
-    
-    msg.attach(MIMEText(body, 'plain'))
-    
-    # Send email
     try:
+        # Get email credentials from Secret Manager
+        project_id = os.environ.get('PROJECT_ID')
+        smtp_username = get_secret(project_id, 'smtp-username')
+        smtp_password = get_secret(project_id, 'smtp-password')
+        
+        # Create email message
+        msg = MIMEMultipart()
+        msg['From'] = smtp_username
+        msg['To'] = student['email']
+        msg['Subject'] = f"Grade Update - {grade_entry['course']['course_name']}"
+        
+        # Format the date
+        grade_date = datetime.strptime(str(grade_entry['grade_date']), '%Y-%m-%d').strftime('%B %d, %Y')
+        
+        body = f"""
+        Dear {student['first_name']} {student['last_name']},
+        
+        Your grade for {grade_entry['course']['course_name']} ({course_code}) has been updated.
+        
+        Course Details:
+        - Course Code: {course_code}
+        - Course Name: {grade_entry['course']['course_name']}
+        - Credits: {grade_entry['course']['credits']}
+        - Department: {grade_entry['course']['department']}
+        
+        Grade Information:
+        - Grade: {grade_entry['grade_value']}
+        - Semester: {grade_entry['semester']}
+        - Date Updated: {grade_date}
+        
+        Best regards,
+        Student Management System
+        
+        This is an automated message. Please do not reply to this email.
+        """
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Send email
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(smtp_username, smtp_password)
@@ -104,4 +108,5 @@ def notify_grade_update(request):
         
         return jsonify({'message': 'Email notification sent successfully'})
     except Exception as e:
+        print(f"Error sending email: {str(e)}")
         return jsonify({'error': f'Failed to send email: {str(e)}'}), 500

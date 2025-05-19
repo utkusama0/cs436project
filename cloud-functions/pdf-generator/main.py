@@ -7,6 +7,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 import io
 import os
+from datetime import datetime
 
 @functions_framework.http
 def generate_transcript(request):
@@ -34,16 +35,17 @@ def generate_transcript(request):
     student = student_response.json()
     
     # Get transcript data from grade service
-    # Use the query parameter endpoint as confirmed by backend logs
     transcript_response = requests.get(
-        f"{os.environ.get('GRADE_SERVICE_URL')}?student_id={student_id}"
+        f"{os.environ.get('GRADE_SERVICE_URL')}/student/{student_id}/transcript"
     )
     if transcript_response.status_code != 200:
-        # Log the status code and response for debugging
         print(f"Error fetching transcript for student {student_id}: Status Code {transcript_response.status_code}, Response: {transcript_response.text}")
-        return jsonify({'error': 'Failed to fetch transcript'}), transcript_response.status_code # Return backend status if non-200
+        return jsonify({'error': 'Failed to fetch transcript'}), transcript_response.status_code
     
     transcript = transcript_response.json()
+    
+    if not transcript:
+        return jsonify({'error': 'No transcript data found for this student'}), 404
     
     # Create PDF
     buffer = io.BytesIO()
@@ -55,43 +57,54 @@ def generate_transcript(request):
     elements.append(Paragraph(f"Academic Transcript", styles['Title']))
     elements.append(Paragraph(f"Student ID: {student_id}", styles['Normal']))
     elements.append(Paragraph(f"Name: {student['first_name']} {student['last_name']}", styles['Normal']))
-    elements.append(Paragraph(f"Department: {student['department']}", styles['Normal']))
+    elements.append(Paragraph(f"Email: {student['email']}", styles['Normal']))
+    elements.append(Paragraph(f"Enrollment Date: {student['enrollment_date']}", styles['Normal']))
     elements.append(Paragraph("", styles['Normal']))  # Spacing
     
     # Create transcript table
     data = [['Course Code', 'Course Name', 'Credits', 'Grade', 'Semester']]
     for entry in transcript:
-        data.append([
-            entry['course']['course_code'],
-            entry['course']['course_name'],
-            str(entry['course']['credits']),
-            entry['grade_value'],
-            entry['semester']
-        ])
+        try:
+            data.append([
+                entry['course']['course_code'],
+                entry['course']['course_name'],
+                str(entry['course']['credits']),
+                str(entry['grade_value']),
+                entry['semester']
+            ])
+        except KeyError as e:
+            print(f"Missing field in transcript entry: {e}")
+            continue
     
-    table = Table(data)
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 14),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 12),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-    ]))
+    if len(data) == 1:  # Only header row
+        elements.append(Paragraph("No courses found in transcript", styles['Normal']))
+    else:
+        table = Table(data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 12),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        elements.append(table)
     
-    elements.append(table)
+    # Add footer with generation date
+    elements.append(Paragraph("", styles['Normal']))  # Spacing
+    elements.append(Paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", styles['Normal']))
+    
     doc.build(elements)
     
     # Get PDF content
     pdf_content = buffer.getvalue()
     buffer.close()
 
-    # Instead of jsonify, return the raw bytes with correct headers
     return Response(
         pdf_content,
         mimetype='application/pdf',

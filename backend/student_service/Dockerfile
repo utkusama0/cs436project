@@ -1,19 +1,21 @@
+# student_service/Dockerfile
+
 FROM python:3.9-slim
 
-# Set the working directory
+# 1) Set working dir
 WORKDIR /app
 
-# Copy requirements and database files
-COPY requirements.txt .
-COPY ../database.py .
+# 2) Copy only the shared files (from the build context root)
+COPY requirements.txt  ./requirements.txt
+COPY database.py       ./database.py
 
-# Install dependencies
+# 3) Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the service files
-COPY . .
+# 4) Copy just your student_service code
+COPY student_service/ ./
 
-# Set environment variables
+# 5) Environment variables (unchanged)
 ENV PYTHONPATH=/app
 ENV DB_HOST=10.128.0.2
 ENV DB_PORT=5432
@@ -23,8 +25,6 @@ ENV DB_NAME=student_management
 ENV REDIS_HOST=redis
 ENV REDIS_PORT=6379
 
-# Expose the port
+# 6) Expose port and start Uvicorn
 EXPOSE 8080
-
-# Run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

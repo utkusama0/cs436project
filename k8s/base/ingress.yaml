@@ -6,6 +6,11 @@ metadata:
   annotations:
     # Google Cloud Ingress Controller için annotation'lar
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
     # Backend servisi için timeout ayarı (isteğe bağlı)
     # ingress.gce.kubernetes.io/backend-timeout: "60s"
     # Eğer global statik IP kullanacaksanız:
@@ -20,10 +25,10 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: frontend-service
+            name: frontend
             port:
               number: 80
-      # Backend API trafiği - API Gateway rolü görebilir
+      # Backend API trafiği
       - path: /api/students
         pathType: Prefix
         backend:

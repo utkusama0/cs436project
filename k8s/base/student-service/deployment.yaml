@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: student-service
-  namespace: cs436-project
+  namespace: student-management
 spec:
   replicas: 2
   selector:

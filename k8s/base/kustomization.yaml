@@ -4,10 +4,17 @@ resources:
 - namespace.yaml
 - configmaps/
 - secrets/
-- student-service/
-- course-service/
-- grade-service/
-- frontend/
+- student-service/deployment.yaml
+- student-service/service.yaml
+- student-service/hpa.yaml
+- course-service/deployment.yaml
+- course-service/service.yaml
+- course-service/hpa.yaml
+- grade-service/deployment.yaml
+- grade-service/service.yaml
+- grade-service/hpa.yaml
+- frontend/deployment.yaml
+- frontend/service.yaml
+- frontend/hpa.yaml
 - redis/
 - ingress.yaml
-# Ek base kaynakları buraya eklenebilir 

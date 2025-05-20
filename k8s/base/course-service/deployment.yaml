@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: course-service
-  namespace: cs436-project
+  namespace: student-management
 spec:
   replicas: 2
   selector:
@@ -39,4 +39,4 @@ spec:
             cpu: "200m"
           limits:
             memory: "512Mi"
-            cpu: "500m" 
+            cpu: "500m"

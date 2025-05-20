@@ -16,6 +16,7 @@ spec:
       containers:
       - name: student-service
         image: gcr.io/cs436termproject-460018/student-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -39,4 +40,4 @@ spec:
             cpu: "200m"
           limits:
             memory: "512Mi"
-            cpu: "500m" 
+            cpu: "500m"

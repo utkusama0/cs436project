@@ -16,6 +16,7 @@ spec:
       containers:
       - name: course-service
         image: gcr.io/cs436termproject-460018/course-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8081
         env:

@@ -24,21 +24,21 @@ spec:
             port:
               number: 80
       # Backend API trafiği - API Gateway rolü görebilir
-      - path: /students
+      - path: /api/students
         pathType: Prefix
         backend:
           service:
             name: student-service
             port:
               number: 80
-      - path: /courses
+      - path: /api/courses
         pathType: Prefix
         backend:
           service:
             name: course-service
             port:
               number: 80
-      - path: /grades
+      - path: /api/grades
         pathType: Prefix
         backend:
           service:

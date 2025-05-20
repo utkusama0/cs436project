@@ -59,4 +59,4 @@ def delete_course(course_code: str, db: Session = Depends(get_db)):
     return
 
 # Mount the router
-app.include_router(router, prefix="/courses", tags=["courses"])
+app.include_router(router, prefix="/api/courses", tags=["courses"])

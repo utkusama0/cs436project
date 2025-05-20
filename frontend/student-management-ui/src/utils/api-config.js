@@ -1,5 +1,5 @@
 // Backend API endpoint configuration
-const API_BASE_URL = 'http://34.29.190.192';  // Your ingress controller's IP address
+const API_BASE_URL = import.meta.env.VITE_API_BASE || '/api';  // Your ingress controller's IP address
 
 // API endpoints
 const endpoints = {

@@ -105,4 +105,4 @@ def delete_grade(grade_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 # Mount the router
-app.include_router(router, prefix="/grades", tags=["grades"])
+app.include_router(router, prefix="/api/grades", tags=["grades"])

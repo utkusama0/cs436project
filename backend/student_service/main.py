@@ -62,4 +62,4 @@ def delete_student(student_id: str, db: Session = Depends(get_db)):
     return
 
 # Mount the router
-app.include_router(router, prefix="/students", tags=["students"])
+app.include_router(router, prefix="/api/students", tags=["students"])

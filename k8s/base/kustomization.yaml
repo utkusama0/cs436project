@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - namespace.yaml
 - configmaps/app-config.yaml
-- secrets/database-secret.yaml
+- secrets/db-credentials.yaml
 - student-service/deployment.yaml
 - student-service/service.yaml
 - student-service/hpa.yaml

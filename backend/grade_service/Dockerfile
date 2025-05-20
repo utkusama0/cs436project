@@ -23,4 +23,4 @@ ENV REDIS_HOST=redis
 ENV REDIS_PORT=6379
 
 EXPOSE 8082
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8082"]
+CMD ["uvicorn", "grade_service.main:app", "--host", "0.0.0.0", "--port", "8082"]

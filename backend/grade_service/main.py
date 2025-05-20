@@ -1,8 +1,8 @@
 from fastapi import FastAPI, APIRouter, HTTPException, status, Depends, Query
 from typing import List , Optional
 from sqlalchemy.orm import Session
-from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate
-from .models import Grade,Course
+from grade_service.schemas import Grade as GradeSchema, GradeCreate, GradeUpdate
+from grade_service.models import Grade,Course
 from database import get_db
 import logging
 

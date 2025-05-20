@@ -1,8 +1,8 @@
 from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
 from typing import List
 from sqlalchemy.orm import Session
-from .schemas import Student as StudentSchema, StudentCreate, StudentUpdate
-from .models import Student
+from student_service.schemas import Student as StudentSchema, StudentCreate, StudentUpdate
+from student_service.models import Student
 from database import get_db
 
 app = FastAPI()

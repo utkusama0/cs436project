@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: cs436project
+  namespace: student-management
 spec:
   replicas: 1
   selector:

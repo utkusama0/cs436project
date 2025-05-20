@@ -11,7 +11,7 @@ COPY database.py       ./database.py
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Only bring in course_service code
-COPY course_service/ ./
+COPY course_service/ ./course_service/
 
 ENV PYTHONPATH=/app
 ENV DB_HOST=10.128.0.2

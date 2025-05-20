@@ -13,7 +13,10 @@ COPY database.py       ./database.py
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 4) Copy just your student_service code
-COPY student_service/ ./
+# ...existing code...
+# 4) Copy the entire student_service directory into /app
+COPY student_service/ ./student_service/
+# ...existing code...
 
 # 5) Environment variables (unchanged)
 ENV PYTHONPATH=/app

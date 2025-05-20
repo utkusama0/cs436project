@@ -11,7 +11,7 @@ COPY database.py       ./database.py
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy only the grade_service folder’s contents
-COPY grade_service/ ./
+COPY grade_service/ ./grade_service/
 
 ENV PYTHONPATH=/app
 ENV DB_HOST=10.128.0.2

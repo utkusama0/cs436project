@@ -1,10 +1,9 @@
 from fastapi import FastAPI, APIRouter, HTTPException, status, Depends, Query
-from typing import List
-from sqlalchemy.orm import Session, joinedload
-from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate, TranscriptEntry, CourseDetails
+from typing import List , Optional
+from sqlalchemy.orm import Session
+from .schemas import Grade as GradeSchema, GradeCreate, GradeUpdate
 from .models import Grade
 from database import get_db
-from course_service.models import Course
 import logging
 
 # Configure logging
@@ -103,40 +102,6 @@ def delete_grade(grade_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         logger.error(f"Error deleting grade: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@router.get("/student/{student_id}/transcript", response_model=List[TranscriptEntry])
-def get_student_transcript(student_id: str, db: Session = Depends(get_db)):
-    try:
-        transcript_data = (
-            db.query(Grade, Course)
-            .join(Course, Grade.course_code == Course.course_code)
-            .filter(Grade.student_id == student_id)
-            .all()
-        )
-
-        if not transcript_data:
-            return []
-
-        formatted_transcript = []
-        for grade, course in transcript_data:
-            formatted_transcript.append(TranscriptEntry(
-                grade_id=grade.grade_id,
-                semester=grade.semester,
-                grade_value=grade.grade_value,
-                grade_date=grade.grade_date,
-                course=CourseDetails(
-                    course_code=course.course_code,
-                    course_name=course.name,
-                    credits=course.credits,
-                    department=course.department,
-                    description=course.description,
-                )
-            ))
-
-        return formatted_transcript
-    except Exception as e:
-        logger.error(f"Error getting student transcript: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 # Mount the router

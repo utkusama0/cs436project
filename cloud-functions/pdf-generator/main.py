@@ -1,3 +1,4 @@
+"""
 import functions_framework
 from flask import jsonify, Response
 import requests
@@ -117,3 +118,4 @@ def generate_transcript(request):
         mimetype='application/pdf',
         headers={'Content-Disposition': f'attachment;filename=transcript_{student_id}.pdf'}
     )
+"""

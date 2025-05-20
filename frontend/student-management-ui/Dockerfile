@@ -5,8 +5,9 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# copy env first so "npm install" layer can be cached in the future
-COPY .env ./.env
+# Create .env file
+RUN echo "VITE_API_BASE=/api" > .env && \
+    echo "NODE_ENV=production" >> .env
 
 # dependencies
 COPY package*.json ./

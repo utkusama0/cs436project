@@ -2,21 +2,28 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# 1) install exactly what package.json says
-COPY package.json ./
-RUN npm install --no-progress
+# 1) Copy both package files so we can use npm ci (lockfile-driven install)
+COPY package.json package-lock.json ./
 
-# 2) copy the rest and build
+# 2) Install exactly what's in package-lock.json (including react-bootstrap)
+RUN npm ci --no-progress
+
+# 3) Copy the rest of your source
 COPY . .
+
+# 4) Build the Vite + React bundle into /app/dist
 RUN npm run build
 
-# ─────────────── Runtime stage ─────────────
+# ─────────────── Runtime stage ───────────────
 FROM nginx:1.27-alpine
 
-# 3) copy artefacts to the nginx web root
+# 5) Copy built static assets into nginx’s webroot
 COPY --from=builder /app/dist /usr/share/nginx/html
-# let K8s inject /usr/share/nginx/html/env.js later
+
+# 6) Your custom nginx configuration (serves index.html for all client routes)
 COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
-CMD [ "nginx", "-g", "daemon off;" ]
+
+# 7) Launch nginx in foreground
+CMD ["nginx", "-g", "daemon off;"]

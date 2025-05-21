@@ -21,10 +21,9 @@ def demo_info(request: Any):
 
     if student_id:
         # Call your backend API to get real student info
-        # Update the URL below to your actual backend endpoint
         backend_url = f"https://34.29.190.192/api/students/{student_id}"
         try:
-            resp = requests.get(backend_url, timeout=5)
+            resp = requests.get(backend_url, timeout=5, verify=False)  # <--- Ignore SSL verification
             if resp.status_code == 200:
                 return (resp.text, 200, {'Content-Type': 'application/json'})
             else:

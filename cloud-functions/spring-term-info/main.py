@@ -5,11 +5,12 @@ from flask import make_response
 def spring_term_info(request: Any):
     """
     Google Cloud Function: Returns 2025 Spring term information.
-    """    # Define CORS headers
+    """    
+    # Define CORS headers - explicitly set the frontend domain
     cors_headers = {
         'Access-Control-Allow-Origin': 'http://34.29.190.192',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With, Accept',
         'Access-Control-Max-Age': '3600',
         'Content-Type': 'application/json'
     }

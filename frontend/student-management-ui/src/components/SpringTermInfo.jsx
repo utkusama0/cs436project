@@ -6,9 +6,14 @@ const SPRING_TERM_URL = "https://us-central1-cs436termproject-460018.cloudfuncti
 export default function SpringTermInfo() {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState(null);
-
   useEffect(() => {
-    fetch(SPRING_TERM_URL)
+    fetch(SPRING_TERM_URL, {
+      method: 'GET',
+      credentials: 'omit', // Explicitly indicate no credentials needed
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch term info');
         return res.json();

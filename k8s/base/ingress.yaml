@@ -1,32 +1,20 @@
+# k8s/base/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-gateway-ingress
   namespace: student-management
   annotations:
-    # Google Cloud Ingress Controller için annotation'lar
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "8m"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/from-to-www-redirect: "false"
-    # Backend servisi için timeout ayarı (isteğe bağlı)
-    # ingress.gce.kubernetes.io/backend-timeout: "60s"
-    # Eğer global statik IP kullanacaksanız:
-    # kubernetes.io/ingress.global-static-ip-name: YOUR_STATIC_IP_NAME
-    # Add any other necessary annotations for SSL, etc.
 spec:
   rules:
   - http:
       paths:
-      # Frontend trafiği
+      # 1) SPA assets & client routes
       - path: /
         pathType: Prefix
         backend:
@@ -34,14 +22,14 @@ spec:
             name: frontend
             port:
               number: 80
-      # Backend API trafiği
+
+      # 2) API routes
       - path: /api/students
         pathType: Prefix
         backend:
           service:
             name: student-service
-            port:
-              number: 80
+            port: { number: 80 }
       - path: /api/courses
         pathType: Prefix
         backend:
@@ -56,4 +44,3 @@ spec:
             name: grade-service
             port:
               number: 80
-

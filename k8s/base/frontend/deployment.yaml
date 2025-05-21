@@ -4,7 +4,7 @@ metadata:
   name: frontend
   namespace: student-management
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
@@ -17,49 +17,41 @@ spec:
       - name: frontend
         image: gcr.io/cs436termproject-460018/frontend:latest
         ports:
-        - containerPort: 80
-          name: http
-        env:
-        - name: VITE_API_BASE
-          value: "/api"
-        - name: NODE_ENV
-          value: "production"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "200m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - name: http
+          containerPort: 80
+
+        # --- mount our runtime env.js here ---
+        volumeMounts:
+        - name: runtime-env
+          mountPath: /usr/share/nginx/html/env.js
+          subPath: env.js
+
+        # (no need for NODE_ENV or VITE_API_BASE here—
+        # your JS reads window.__APP_CONFIG__.API_BASE)
+
+        # health checks against / (index.html must  return 200)
         readinessProbe:
           httpGet:
             path: /
             port: http
           initialDelaySeconds: 10
           periodSeconds: 15
-          timeoutSeconds: 5
-          failureThreshold: 3
         livenessProbe:
           httpGet:
             path: /
             port: http
-          initialDelaySeconds: 20
+          initialDelaySeconds: 30
           periodSeconds: 20
-          timeoutSeconds: 5
-          failureThreshold: 3
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  namespace: student-management
-  labels:
-    app: frontend
-spec:
-  selector:
-    app: frontend
-  ports:
-  - name: http
-    port: 80
-    targetPort: http
-  type: ClusterIP
+
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+      volumes:
+      - name: runtime-env
+        configMap:
+          name: frontend-env

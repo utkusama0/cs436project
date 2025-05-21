@@ -1,34 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/',
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: false,
-    // Ensure proper chunking
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          bootstrap: ['bootstrap', 'react-bootstrap']
-        }
-      }
-    }
   },
+  // This lets you call fetch("/api/…") in production **and**
+  // use Vite’s proxy during `npm run dev`.
   server: {
-    port: 3000,
-    strictPort: true,
-    host: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:80',
-        changeOrigin: true,
-        secure: false
-      }
-    }
-  }
-})
+      '/api': 'http://localhost:8000', // ignored in prod build
+    },
+  },
+});

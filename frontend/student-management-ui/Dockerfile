@@ -1,38 +1,22 @@
-#####################################################################
-# ---------- 1) build stage (uses modern Node with WebCrypto) -------
-#####################################################################
-FROM node:20-alpine AS build
-
+# ─────────────── Build stage ───────────────
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Create .env file
-RUN echo "VITE_API_BASE=/api" > .env && \
-    echo "NODE_ENV=production" >> .env
+# 1) install exactly what package.json says
+COPY package.json ./
+RUN npm install --no-progress
 
-# dependencies
-COPY package*.json ./
-RUN npm install
-
-# project sources
+# 2) copy the rest and build
 COPY . .
-
-# vite build  ➜ output folder is  /app/dist  (default)
 RUN npm run build
 
-#####################################################################
-# ---------- 2) runtime stage (just Nginx serving static files) -----
-#####################################################################
-FROM nginx:alpine
+# ─────────────── Runtime stage ─────────────
+FROM nginx:1.27-alpine
 
-# copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# copy the compiled static site
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Add healthcheck
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+# 3) copy artefacts to the nginx web root
+COPY --from=builder /app/dist /usr/share/nginx/html
+# let K8s inject /usr/share/nginx/html/env.js later
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "nginx", "-g", "daemon off;" ]

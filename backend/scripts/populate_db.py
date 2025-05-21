@@ -16,7 +16,7 @@ from grade_service.models import Grade
 
 fake = Faker()
 
-def generate_courses(num_courses=10):
+def generate_courses(num_courses=50):
     courses = []
     departments = ['Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 
                   'Engineering', 'Business', 'Economics', 'Psychology', 'History']
@@ -33,7 +33,7 @@ def generate_courses(num_courses=10):
     
     return courses
 
-def generate_students(num_students=20):
+def generate_students(num_students=250):
     students = []
     for i in range(num_students):
         # Generate a shorter phone number
@@ -56,7 +56,7 @@ def generate_grades(students, courses):
     grades = []
     for student in students:
         # Each student takes 2-4 random courses
-        num_courses = random.randint(2, 4)
+        num_courses = random.randint(1, 2)
         student_courses = random.sample(courses, min(num_courses, len(courses)))
         
         for course in student_courses:

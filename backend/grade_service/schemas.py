@@ -1,3 +1,4 @@
+# grade_service/schemas.py
 from pydantic import BaseModel
 from datetime import date
 from typing import Optional
@@ -14,14 +15,19 @@ class GradeCreate(GradeBase):
 
 class GradeUpdate(BaseModel):
     grade_value: Optional[int] = None
-    semester: Optional[str] = None
-    grade_date: Optional[date] = None
+    semester:    Optional[str] = None
+    grade_date:  Optional[date] = None
 
-class Grade(GradeBase):
+class GradeSchema(GradeBase):
     grade_id: int
 
     class Config:
         orm_mode = True
+
+# (Your CourseDetails / TranscriptEntry schemas can stay the same.)
+
+
+# (Your CourseDetails / TranscriptEntry schemas can stay the same.)
 
 # New schema for Course details within a transcript entry
 class CourseDetails(BaseModel):

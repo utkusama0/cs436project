@@ -8,15 +8,12 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    # This annotation is key to prevent the rewrite cycle in the frontend
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
   - http:
       paths:
         # 1) API routes (longest prefixes first)
-        - path: /api/students(/|$)(.*)
+        - path: /api/students
           pathType: Prefix
           backend:
             service:
@@ -24,7 +21,7 @@ spec:
               port:
                 number: 80
 
-        - path: /api/courses(/|$)(.*)
+        - path: /api/courses
           pathType: Prefix
           backend:
             service:
@@ -32,7 +29,7 @@ spec:
               port:
                 number: 80
 
-        - path: /api/grades(/|$)(.*)
+        - path: /api/grades
           pathType: Prefix
           backend:
             service:
@@ -41,7 +38,7 @@ spec:
                 number: 80
 
         # 2) Everything else → frontend
-        - path: /(.*)
+        - path: /
           pathType: Prefix
           backend:
             service:

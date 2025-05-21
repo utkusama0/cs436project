@@ -8,12 +8,9 @@
 
     <!-- 1) Load runtime config BEFORE the app bundle -->
     <script src="/env.js"></script>
-
-    <!-- 2) Vite injects your production bundles here -->
-    <!-- the "src" will be rewritten to /assets/index-<hash>.js -->
-    <script type="module" crossorigin src="/src/main.jsx"></script>
   </head>
   <body>
     <div id="root"></div>
+    <!-- Vite will inject scripts during build -->
   </body>
 </html>

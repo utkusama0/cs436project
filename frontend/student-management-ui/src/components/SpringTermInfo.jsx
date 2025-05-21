@@ -6,14 +6,48 @@ const SPRING_TERM_URL = "https://us-central1-cs436termproject-460018.cloudfuncti
 export default function SpringTermInfo() {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState(null);
+  const [isUsingFallback, setIsUsingFallback] = useState(false);
+
   useEffect(() => {
-    fetch(SPRING_TERM_URL, {
-      method: 'GET',
-      credentials: 'omit', // Explicitly indicate no credentials needed
-      headers: {
-        'Accept': 'application/json'
+    const fetchData = async () => {
+      try {
+        // Try direct fetch first
+        const response = await fetch(SPRING_TERM_URL, {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
+          headers: {
+            'Accept': 'application/json',
+            'Origin': window.location.origin
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch term info');
+        }
+        
+        const data = await response.json();
+        setInfo(data);
+      } catch (e) {
+        console.error("Direct fetch failed:", e);
+        
+        // Try using proxy as fallback if available
+        if (window.fetchTermInfo) {
+          setIsUsingFallback(true);
+          try {
+            const proxyData = await window.fetchTermInfo();
+            setInfo(proxyData);
+          } catch (proxyError) {
+            setError("Failed to fetch data: " + proxyError.message);
+          }
+        } else {
+          setError(e.message);
+        }
       }
-    })
+    };
+    
+    fetchData();
+  }, []);
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch term info');
         return res.json();

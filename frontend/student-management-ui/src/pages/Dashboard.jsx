@@ -5,6 +5,7 @@ import studentService from '../services/studentService';
 import courseService from '../services/courseService';
 import gradeService from '../services/gradeService';
 import Loading from '../components/common/Loading';
+import SpringTermInfo from '../components/SpringTermInfo';
 
 const Dashboard = () => {
   const [counts, setCounts] = useState({
@@ -46,6 +47,7 @@ const Dashboard = () => {
   return (
     <Container className="my-4">
       <h1 className="mb-4">Dashboard</h1>
+      <SpringTermInfo />
       
       <Row>
         <Col md={4}>

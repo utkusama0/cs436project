@@ -19,10 +19,4 @@ class Grade(Base):
         CheckConstraint('grade >= 0 AND grade <= 100', name='check_grade_range'),
     )
 
-class Course(Base):
-    __tablename__ = "courses"
-    course_code = Column(String(10), primary_key=True)
-    name        = Column(String(100), nullable=False)
-    credits     = Column(Integer, nullable=False)
-    department  = Column(String(50), nullable=False)
-    description = Column(Text)
+

@@ -1,3 +1,4 @@
+# k8s/base/frontend/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,44 +15,15 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend
-        image: gcr.io/cs436termproject-460018/frontend:latest
-        ports:
-        - name: http
-          containerPort: 80
-
-        # --- mount our runtime env.js here ---
-        volumeMounts:
-        - name: runtime-env
-          mountPath: /usr/share/nginx/html/env.js
-          subPath: env.js
-
-        # (no need for NODE_ENV or VITE_API_BASE here—
-        # your JS reads window.__APP_CONFIG__.API_BASE)
-
-        # health checks against / (index.html must  return 200)
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 10
-          periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 30
-          periodSeconds: 20
-
-        resources:
-          requests:
-            cpu: 200m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-
+        - name: frontend
+          image: gcr.io/<PROJECT>/frontend:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: runtime-env
+              mountPath: /usr/share/nginx/html/env.js
+              subPath: env.js
       volumes:
-      - name: runtime-env
-        configMap:
-          name: frontend-env
+        - name: runtime-env
+          configMap:
+            name: frontend-env

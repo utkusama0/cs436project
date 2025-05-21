@@ -1,8 +1,9 @@
-# k8s/base/configmap-frontend-env.yaml
+# k8s/base/frontend/configmap-frontend-env.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: frontend-env
+  namespace: student-management
 data:
   env.js: |
-    window.__APP_CONFIG__ = { API_BASE: '/api' };
+    window.__APP_CONFIG__ = { VITE_API_BASE: '/api' };

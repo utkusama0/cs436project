@@ -14,6 +14,7 @@ resources:
 - grade-service/service.yaml
 - grade-service/hpa.yaml
 - frontend/deployment.yaml
+- frontend/configmap-frontend-env.yaml
 - frontend/service.yaml
 - frontend/hpa.yaml
 - redis/deployment.yaml

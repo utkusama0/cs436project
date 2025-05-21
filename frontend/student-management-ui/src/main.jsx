@@ -1,14 +1,13 @@
+// src/main.jsx
 import React from 'react';
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot }   from 'react-dom/client';
 
-// 1) Import Bootstrap’s CSS so React-Bootstrap components render correctly
+// 1) Bootstrap styles
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-// 2) Your global styles
+// 2) Your own global CSS
 import './index.css';
-
-// 3) The root app
+// 3) The App component
 import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(

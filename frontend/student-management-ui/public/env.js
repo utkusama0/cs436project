@@ -1,3 +1,4 @@
 window.__APP_CONFIG__ = {
-  API_BASE: '/api'   // K8s ConfigMap will replace this line
+    // K8s ConfigMap will replace this line
+  VITE_API_BASE: '/api'
 };

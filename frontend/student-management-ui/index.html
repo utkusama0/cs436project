@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>Student Management UI</title>
   </head>
   <body>
     <div id="root"></div>
+    <!-- 1) MUST load before your bundle so API_BASE is defined -->
+    <script src="/env.js"></script>
+    <!-- 2) Vite will rewrite this to /assets/index-XXX.js -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

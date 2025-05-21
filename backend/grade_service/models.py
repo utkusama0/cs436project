@@ -4,7 +4,7 @@ from database import Base
 class Grade(Base):
     __tablename__ = "grades"
 
-    grade_id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     student_id = Column(String, index=True)
     course_code = Column(String, index=True)
     grade_value = Column(Integer)

@@ -19,4 +19,4 @@ class CourseUpdate(BaseModel):
 
 class Course(CourseBase):
     class Config:
-        from_attributes = True
+        orm_mode = True

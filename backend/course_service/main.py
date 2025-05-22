@@ -1,15 +1,27 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
 from typing import List
 from sqlalchemy.orm import Session
-from .schemas import Course as CourseSchema, CourseCreate, CourseUpdate
-from .models import Course
+from course_service.schemas import Course as CourseSchema, CourseCreate, CourseUpdate
+from course_service.models import Course
 from database import get_db
 
+app = FastAPI()
 router = APIRouter()
 
 @router.get("/", response_model=List[CourseSchema])
 def list_courses(db: Session = Depends(get_db)):
-    return db.query(Course).all()
+    courses = db.query(Course).all()
+    # Explicitly convert SQLAlchemy models to dictionaries
+    courses_data = []
+    for course in courses:
+        courses_data.append({
+            "course_code": course.course_code,
+            "name": course.name,
+            "description": course.description,
+            "credits": course.credits,
+            "department": course.department,
+        })
+    return courses_data
 
 @router.post("/", response_model=CourseSchema, status_code=status.HTTP_201_CREATED)
 def create_course(course: CourseCreate, db: Session = Depends(get_db)):
@@ -45,3 +57,6 @@ def delete_course(course_code: str, db: Session = Depends(get_db)):
     db.delete(course)
     db.commit()
     return
+
+# Mount the router
+app.include_router(router, prefix="/api/courses", tags=["courses"])

@@ -33,9 +33,12 @@ def generate_courses(num_courses=50):
     
     return courses
 
-def generate_students(num_students=5000):
+def generate_students(num_students=250):
     students = []
     for i in range(num_students):
+        # Generate a shorter phone number
+        phone = fake.numerify(text='###-###-####')
+        
         student = Student(
             student_id=f"S{10000 + i}",  # Sequential, unique IDs
             first_name=fake.first_name(),
@@ -43,7 +46,7 @@ def generate_students(num_students=5000):
             email=fake.unique.email(),
             date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=30),
             address=fake.address(),
-            phone=fake.phone_number(),
+            phone=phone,
             enrollment_date=fake.date_between(start_date='-4y', end_date='today')
         )
         students.append(student)
@@ -52,9 +55,9 @@ def generate_students(num_students=5000):
 def generate_grades(students, courses):
     grades = []
     for student in students:
-        # Each student takes 5-8 random courses
-        num_courses = random.randint(5, 8)
-        student_courses = random.sample(courses, num_courses)
+        # Each student takes 2-4 random courses
+        num_courses = random.randint(1, 2)
+        student_courses = random.sample(courses, min(num_courses, len(courses)))
         
         for course in student_courses:
             grade = Grade(

@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- namespace.yaml
+- configmaps/app-config.yaml
+- secrets/db-credentials.yaml
+- student-service/deployment.yaml
+- student-service/service.yaml
+- student-service/hpa.yaml
+- course-service/deployment.yaml
+- course-service/service.yaml
+- course-service/hpa.yaml
+- grade-service/deployment.yaml
+- grade-service/service.yaml
+- grade-service/hpa.yaml
+- frontend/deployment.yaml
+- frontend/configmap-frontend-env.yaml
+- frontend/service.yaml
+- frontend/hpa.yaml
+- redis/deployment.yaml
+- redis/service.yaml
+- ingress.yaml 

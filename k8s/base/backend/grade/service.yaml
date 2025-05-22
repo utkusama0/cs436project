@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grade-service
+  namespace: student-management
+  labels:
+    app: grade-service
+spec:
+  selector:
+    app: grade-service
+  ports:
+  - protocol: TCP
+    port: 8080 # Service port
+    targetPort: 8080 # Container port
+  type: ClusterIP # Expose service within the cluster

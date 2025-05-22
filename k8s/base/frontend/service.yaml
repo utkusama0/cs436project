@@ -1,0 +1,12 @@
+# k8s/base/frontend/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: student-management
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80

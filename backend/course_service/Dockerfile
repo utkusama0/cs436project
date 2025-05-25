@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY course_service/ ./course_service/
 
 ENV PYTHONPATH=/app
-ENV DB_HOST=10.128.0.2
+ENV DB_HOST=10.128.0.6
 ENV DB_PORT=5432
 ENV DB_USER=postgres
 ENV DB_PASSWORD=12345678

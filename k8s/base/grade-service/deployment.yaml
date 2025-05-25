@@ -15,21 +15,41 @@ spec:
     spec:
       containers:
       - name: grade-service
-        image: gcr.io/cs436termproject-460018/grade-service:latest
+        image: gcr.io/cs436-460908/grade-service:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8082
         env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: database-url
         - name: DB_HOST
-          value: "10.128.0.2"
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-host
         - name: DB_PORT
-          value: "5432"
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-port
         - name: DB_USER
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: username
         - name: DB_PASSWORD
-          value: "12345678"
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: password
         - name: DB_NAME
-          value: "student_management"
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-name
         - name: REDIS_HOST
           value: "redis"
         - name: REDIS_PORT
@@ -41,3 +61,15 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8082
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10

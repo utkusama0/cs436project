@@ -22,4 +22,5 @@ resources:
   - frontend/hpa.yaml
   - redis/deployment.yaml
   - redis/service.yaml
-  - ingress.yaml
+  - ingress-api.yaml
+  - ingress-frontend.yaml

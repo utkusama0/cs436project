@@ -6,7 +6,7 @@ from course_service.models import Course
 from database import get_db
 
 app = FastAPI()
-router = APIRouter()
+router = APIRouter(tags=["courses"])
 
 @router.get("/", response_model=List[CourseSchema])
 def list_courses(db: Session = Depends(get_db)):
@@ -59,4 +59,9 @@ def delete_course(course_code: str, db: Session = Depends(get_db)):
     return
 
 # Mount the router
-app.include_router(router, prefix="/api/courses", tags=["courses"])
+app.include_router(router)
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes probes"""
+    return {"status": "healthy", "service": "courses"}

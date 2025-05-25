@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-router = APIRouter(prefix="/api/grades", tags=["grades"])
+router = APIRouter(tags=["grades"])
 
 @router.get("/", response_model=List[GradeSchema])
 def list_grades(
@@ -101,3 +101,8 @@ def get_student_transcript(student_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 app.include_router(router)
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes probes"""
+    return {"status": "healthy", "service": "grades"}

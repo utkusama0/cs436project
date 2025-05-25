@@ -2,9 +2,20 @@
 import React from 'react';
 import { StrictMode } from 'react';
 import { createRoot }   from 'react-dom/client';
+import axios from 'axios';
 
 // Debug: Log that the main module is loading
 console.log('Main module loading');
+
+// Configure axios to use the same protocol as the current page
+axios.defaults.baseURL = '';
+axios.interceptors.request.use((config) => {
+  // Ensure API calls use the same protocol as the page
+  if (config.url && config.url.startsWith('/api')) {
+    config.url = `${window.location.protocol}//${window.location.host}${config.url}`;
+  }
+  return config;
+});
 
 // 1) Bootstrap styles
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -143,7 +143,7 @@ const StudentDetailPage = () => {
               </Form.Select>
               <Button 
                 as={Link} 
-                to={`/grades/new?studentId=${studentId}`} 
+                to={`/grades/new/edit`} 
                 variant="primary"
               >
                 Add Grade

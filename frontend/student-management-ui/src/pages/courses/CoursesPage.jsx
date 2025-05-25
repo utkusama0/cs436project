@@ -48,7 +48,7 @@ const CoursesPage = () => {
     <Container className="my-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Courses</h1>
-        <Link to="/courses/new" className="btn btn-success">
+        <Link to="/courses/new/edit" className="btn btn-success">
           Add New Course
         </Link>
       </div>

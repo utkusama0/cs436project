@@ -13,29 +13,30 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
   - http:
       paths:
         # API routes - exact paths without regex
-        - path: /api/students
-          pathType: Prefix
+        - pathType: Prefix
+          path: /api/students(/|$)(.*)
           backend:
             service:
               name: student-service
               port:
                 number: 80
 
-        - path: /api/courses
-          pathType: Prefix
+        - pathType: Prefix
+          path: /api/courses(/|$)(.*)
           backend:
             service:
               name: course-service
               port:
                 number: 80
 
-        - path: /api/grades
-          pathType: Prefix
+        - pathType: Prefix
+          path: /api/grades(/|$)(.*)
           backend:
             service:
               name: grade-service

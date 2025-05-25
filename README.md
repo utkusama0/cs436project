@@ -28,7 +28,9 @@ This project implements a cloud-native student management system using Google Cl
 - Docker installed
 - Python 3.8+ installed
 
-## Setup Instructions
+## Deployment Process
+
+### 1. Environment Setup
 
 1. **Enable Required GCP APIs**
    ```bash
@@ -47,18 +49,46 @@ This project implements a cloud-native student management system using Google Cl
      --machine-type=e2-medium
    ```
 
-3. **Get Cluster Credentials**
+3. **Manually Create a Virtual Machine for PostgreSQL**
+   - Use the GCP Console or CLI to create a VM instance.
+   - Select an appropriate machine type (e.g., `e2-medium`).
+   - Configure the VM to allow incoming connections from the GKE cluster.
+
+### 2. Database Setup
+
+1. **Install and Configure PostgreSQL on the VM**
+   - SSH into the VM and install PostgreSQL:
+     ```bash
+     sudo apt update
+     sudo apt install postgresql postgresql-contrib
+     ```
+   - Configure PostgreSQL to allow connections from the GKE cluster by updating `pg_hba.conf` and `postgresql.conf`.
+
+2. **Manually Update Backend Microservices**
+   - Update the following settings in the backend microservices:
+     - Database credentials (user, password)
+     - Database connection URLs
+
+3. **Ensure Connectivity**
+   - Verify that the VM allows incoming connections from the GKE cluster.
+
+### 3. Cloud Functions Deployment
+
+1. **Deploy the Term Information Cloud Function**
    ```bash
-   gcloud container clusters get-credentials student-management-cluster --zone=us-central1-a
+   gcloud functions deploy spring-term-info \
+     --runtime python39 \
+     --trigger-http \
+     --allow-unauthenticated \
+     --source cloud-functions/spring-term-info
    ```
 
-4. **Create Namespace and Secrets**
-   ```bash
-   kubectl apply -f k8s/base/namespace.yaml
-   kubectl apply -f k8s/base/secrets/db-credentials.yaml
-   ```
+2. **Update Frontend Configuration**
+   - Manually update the frontend’s `SPRING_TERM_URL` environment variable or configuration file with the URL of the deployed cloud function.
 
-5. **Build and Push Docker Images**
+### 4. Kubernetes Deployment
+
+1. **Build and Push Docker Images**
    ```bash
    # Frontend
    docker build -t gcr.io/$PROJECT_ID/frontend:latest frontend/
@@ -73,27 +103,22 @@ This project implements a cloud-native student management system using Google Cl
    docker push gcr.io/$PROJECT_ID/grade-service:latest
    ```
 
-6. **Deploy Kubernetes Resources**
+2. **Update Kubernetes Deployment Manifests**
+   - Update the deployment manifests with:
+     - Correct image paths
+     - Environment variables (e.g., database URLs, credentials)
+
+3. **Apply Kubernetes Resources**
    ```bash
    kubectl apply -k k8s/base
    ```
 
-7. **Deploy Cloud Functions**
-   ```bash
-   # Term Information
-   gcloud functions deploy spring-term-info \
-     --runtime python39 \
-     --trigger-http \
-     --allow-unauthenticated \
-     --source cloud-functions/spring-term-info
-   ```
+4. **Ensure Ingress Configuration**
+   - Verify that Ingress is properly configured for path-based routing.
 
-8. **Set Up Database**
-   ```bash
-   # On primary VM
-   sudo -u postgres psql -d student_management -f scripts/scripts.sql
-   python scripts/populate_db.py
-   ```
+### 5. Deployment Automation Resources
+
+All deployment scripts, Dockerfiles, and Kubernetes configuration files are available in the GitHub repository. Refer to the exact commands and usage instructions provided above.
 
 ## Performance Testing
 
@@ -126,8 +151,7 @@ This project implements a cloud-native student management system using Google Cl
 
 3. **Monitor Cloud Functions**
    ```bash
-   gcloud functions logs read generate-transcript
-   gcloud functions logs read notify-grade-update
+   gcloud functions logs read spring-term-info
    ```
 
 ## Cost Optimization
@@ -146,8 +170,7 @@ To avoid unnecessary charges, clean up resources when not in use:
 gcloud container clusters delete student-management-cluster --zone=us-central1-a
 
 # Delete Cloud Functions
-gcloud functions delete generate-transcript
-gcloud functions delete notify-grade-update
+gcloud functions delete spring-term-info
 
 # Delete Docker images
 gcloud container images delete gcr.io/$PROJECT_ID/frontend:latest

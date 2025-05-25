@@ -101,8 +101,3 @@ def get_student_transcript(student_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 app.include_router(router)
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for Kubernetes probes"""
-    return {"status": "healthy", "service": "grades"}

@@ -60,8 +60,3 @@ def delete_course(course_code: str, db: Session = Depends(get_db)):
 
 # Mount the router
 app.include_router(router)
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for Kubernetes probes"""
-    return {"status": "healthy", "service": "courses"}

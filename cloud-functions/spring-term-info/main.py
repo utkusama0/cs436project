@@ -6,9 +6,9 @@ def spring_term_info(request: Any):
     """
     Google Cloud Function: Returns 2025 Spring term information.
     """    
-    # Define CORS headers - explicitly set the frontend domain
+    # Define CORS headers - allow all origins for now, will be restricted by Ingress
     cors_headers = {
-        'Access-Control-Allow-Origin': 'http://34.29.190.192',
+        'Access-Control-Allow-Origin': '*',  # Allow all origins
         'Access-Control-Allow-Methods': 'GET, OPTIONS, POST',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With, Accept, Origin',
         'Access-Control-Allow-Credentials': 'false',
@@ -18,7 +18,9 @@ def spring_term_info(request: Any):
 
     # Handle CORS preflight request
     if request.method == 'OPTIONS':
-        return ('', 204, cors_headers)    # Handle main request with same CORS headers
+        return ('', 204, cors_headers)
+    
+    # Handle main request with same CORS headers
     info = {
         "term": "2025 Spring",
         "registration_opens": "2025-01-15",

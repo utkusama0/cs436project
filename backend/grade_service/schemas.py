@@ -40,7 +40,7 @@ class CourseDetails(BaseModel):
         orm_mode = True
 
 class GradeSchema(GradeBase):
-    grade_id: int
+    id: int  # Changed from grade_id to id for frontend compatibility
     student: Optional[StudentDetails] = None  # Add nested student data
     course: Optional[CourseDetails] = None    # Add nested course data
 
@@ -49,7 +49,7 @@ class GradeSchema(GradeBase):
 
 # Schema for transcript entries (keeping existing for compatibility)
 class TranscriptEntry(BaseModel):
-    grade_id: int
+    id: int  # Changed from grade_id to id for frontend compatibility
     semester: str
     grade: int  # Changed from grade_value to grade
     date: DateType  # Changed from grade_date to date

@@ -17,7 +17,7 @@ router = APIRouter(tags=["grades"])
 def grade_to_dict(grade_obj):
     """Convert Grade SQLAlchemy object to dictionary with proper field names"""
     result = {
-        "grade_id": grade_obj.grade_id,
+        "id": grade_obj.grade_id,        # Map grade_id to id for frontend compatibility
         "student_id": grade_obj.student_id,
         "course_code": grade_obj.course_code,
         "grade": grade_obj.grade_value,  # Map grade_value to grade

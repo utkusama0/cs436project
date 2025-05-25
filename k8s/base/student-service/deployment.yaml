@@ -34,7 +34,8 @@ spec:
           valueFrom:
             secretKeyRef:
               name: db-secrets
-              key: db-port        - name: DB_USER
+              key: db-port
+        - name: DB_USER
           valueFrom:
             secretKeyRef:
               name: db-secrets

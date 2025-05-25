@@ -54,7 +54,8 @@ spec:
           value: "redis"
         - name: REDIS_PORT
           value: "6379"
-        resources:          requests:
+        resources:
+          requests:
             memory: "256Mi"
             cpu: "200m"
           limits:

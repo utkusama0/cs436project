@@ -1,38 +1,37 @@
 # grade_service/schemas.py
 from pydantic import BaseModel
-from datetime import date
+from datetime import date as DateType
 from typing import Optional
 
 class GradeBase(BaseModel):
     student_id: str
     course_code: str
-    grade_value: int
+    grade: int  # Changed from grade_value to grade
     semester: str
-    grade_date: date
+    date: DateType  # Changed from grade_date to date
 
 class GradeCreate(GradeBase):
     pass
 
 class GradeUpdate(BaseModel):
-    grade_value: Optional[int] = None
-    semester:    Optional[str] = None
-    grade_date:  Optional[date] = None
+    grade: Optional[int] = None  # Changed from grade_value to grade
+    semester: Optional[str] = None
+    date: Optional[DateType] = None  # Changed from grade_date to date
 
-class GradeSchema(GradeBase):
-    grade_id: int
-
+# Student schema for nested data
+class StudentDetails(BaseModel):
+    student_id: str
+    first_name: str
+    last_name: str
+    email: str
+    
     class Config:
         orm_mode = True
 
-# (Your CourseDetails / TranscriptEntry schemas can stay the same.)
-
-
-# (Your CourseDetails / TranscriptEntry schemas can stay the same.)
-
-# New schema for Course details within a transcript entry
+# Course schema for nested data  
 class CourseDetails(BaseModel):
     course_code: str
-    course_name: str # Assuming 'name' in model maps to 'course_name' in schema/frontend
+    name: str  # Changed from course_name to name for consistency
     credits: int
     department: str
     description: Optional[str] = None
@@ -40,12 +39,20 @@ class CourseDetails(BaseModel):
     class Config:
         orm_mode = True
 
-# New schema for a single transcript entry (Grade with nested Course details)
+class GradeSchema(GradeBase):
+    grade_id: int
+    student: Optional[StudentDetails] = None  # Add nested student data
+    course: Optional[CourseDetails] = None    # Add nested course data
+
+    class Config:
+        orm_mode = True
+
+# Schema for transcript entries (keeping existing for compatibility)
 class TranscriptEntry(BaseModel):
     grade_id: int
     semester: str
-    grade_value: int # Renamed to avoid conflict with nested course grade if any
-    grade_date: date # Renamed for clarity
+    grade: int  # Changed from grade_value to grade
+    date: DateType  # Changed from grade_date to date
     course: CourseDetails
 
     class Config:

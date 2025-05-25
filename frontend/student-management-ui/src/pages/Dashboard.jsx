@@ -96,9 +96,9 @@ const Dashboard = () => {
             <Card.Header>Quick Actions</Card.Header>
             <Card.Body>
               <div className="d-grid gap-2">
-                <Link to="/students/new" className="btn btn-outline-primary">Add New Student</Link>
-                <Link to="/courses/new" className="btn btn-outline-primary">Add New Course</Link>
-                <Link to="/grades/new" className="btn btn-outline-primary">Record New Grade</Link>
+                <Link to="/students/new/edit" className="btn btn-outline-primary">Add New Student</Link>
+                <Link to="/courses/new/edit" className="btn btn-outline-primary">Add New Course</Link>
+                <Link to="/grades/new/edit" className="btn btn-outline-primary">Record New Grade</Link>
               </div>
             </Card.Body>
           </Card>

@@ -30,19 +30,19 @@ function App() {
             
             {/* Student Routes */}
             <Route path="/students" element={<StudentsPage />} />
-            <Route path="/students/new/edit" element={<StudentEditPage />} />
+            <Route path="/students/:new/edit" element={<StudentEditPage />} />
             <Route path="/students/:studentId" element={<StudentDetailPage />} />
             <Route path="/students/:studentId/edit" element={<StudentEditPage />} />
             
             {/* Course Routes */}
             <Route path="/courses" element={<CoursesPage />} />
-            <Route path="/courses/new/edit" element={<CourseEditPage />} />
+            <Route path="/courses/:new/edit" element={<CourseEditPage />} />
             <Route path="/courses/:courseCode" element={<CourseDetailPage />} />
             <Route path="/courses/:courseCode/edit" element={<CourseEditPage />} />
             
             {/* Grade Routes */}
             <Route path="/grades" element={<GradesPage />} />
-            <Route path="/grades/new/edit" element={<GradeEditPage />} />
+            <Route path="/grades/:new/edit" element={<GradeEditPage />} />
             <Route path="/grades/:gradeId/edit" element={<GradeEditPage />} />
             <Route path="/transcript" element={<TranscriptPage />} />
           </Routes>

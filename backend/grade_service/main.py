@@ -90,4 +90,14 @@ def delete_grade(grade_id: int, db: Session = Depends(get_db)):
         logger.error(f"Error deleting grade: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@router.get("/student/{student_id}/transcript", response_model=List[GradeSchema])
+def get_student_transcript(student_id: str, db: Session = Depends(get_db)):
+    """Get all grades for a specific student (transcript)"""
+    try:
+        grades = db.query(Grade).filter(Grade.student_id == student_id).all()
+        return grades
+    except Exception as e:
+        logger.error(f"Error getting transcript for student {student_id}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 app.include_router(router)

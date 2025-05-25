@@ -23,14 +23,24 @@ const gradeService = {  // Get all grades
       throw error;
     }
   },
-
   // Get grades by student ID
   getGradesByStudentId: async (studentId) => {
+    try {
+      const response = await axios.get(endpoints.grades.getByStudentId(studentId));
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching grades for student ${studentId}:`, error);
+      throw error;
+    }
+  },
+
+  // Get student transcript (alternative endpoint for transcript view)
+  getStudentTranscript: async (studentId) => {
     try {
       const response = await axios.get(`${endpoints.grades.getAll}/student/${studentId}/transcript`);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching grades for student ${studentId}:`, error);
+      console.error(`Error fetching transcript for student ${studentId}:`, error);
       throw error;
     }
   },

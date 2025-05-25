@@ -18,8 +18,7 @@ This project implements a cloud-native student management system using Google Cl
    - Replica PostgreSQL Database
 
 3. **Serverless Functions (Google Cloud Functions)**
-   - PDF Generator (Generates student transcripts)
-   - Email Notifier (Sends grade update notifications)
+   - Term information
 
 ## Prerequisites
 
@@ -81,19 +80,12 @@ This project implements a cloud-native student management system using Google Cl
 
 7. **Deploy Cloud Functions**
    ```bash
-   # PDF Generator
-   gcloud functions deploy generate-transcript \
+   # Term Information
+   gcloud functions deploy spring-term-info \
      --runtime python39 \
      --trigger-http \
      --allow-unauthenticated \
-     --source cloud-functions/pdf-generator
-
-   # Email Notifier
-   gcloud functions deploy notify-grade-update \
-     --runtime python39 \
-     --trigger-http \
-     --allow-unauthenticated \
-     --source cloud-functions/email-notifier
+     --source cloud-functions/spring-term-info
    ```
 
 8. **Set Up Database**

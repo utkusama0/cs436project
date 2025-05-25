@@ -8,40 +8,38 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
   - http:
       paths:
-        # API routes with regex to handle trailing slashes
-        - path: /api/students(/|$)(.*)
-          pathType: ImplementationSpecific
+        # API routes - exact paths without regex
+        - path: /api/students
+          pathType: Prefix
           backend:
             service:
               name: student-service
               port:
                 number: 80
 
-        - path: /api/courses(/|$)(.*)
-          pathType: ImplementationSpecific
+        - path: /api/courses
+          pathType: Prefix
           backend:
             service:
               name: course-service
               port:
                 number: 80
 
-        - path: /api/grades(/|$)(.*)
-          pathType: ImplementationSpecific
+        - path: /api/grades
+          pathType: Prefix
           backend:
             service:
               name: grade-service
               port:
                 number: 80
 
-        # Frontend - everything else
-        - path: /(.*)
-          pathType: ImplementationSpecific
+        # Frontend - everything else (no regex rewrite)
+        - path: /
+          pathType: Prefix
           backend:
             service:
               name: frontend

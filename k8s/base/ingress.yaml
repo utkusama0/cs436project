@@ -13,12 +13,11 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
   - http:
       paths:
-        # API routes - exact paths without regex
+        # API routes - add per-path rewrite annotation
         - pathType: Prefix
           path: /api/students(/|$)(.*)
           backend:
@@ -26,6 +25,9 @@ spec:
               name: student-service
               port:
                 number: 80
+          # Per-path annotation for rewrite
+          pathRewrite:
+            nginx.ingress.kubernetes.io/rewrite-target: /$2
 
         - pathType: Prefix
           path: /api/courses(/|$)(.*)
@@ -34,6 +36,8 @@ spec:
               name: course-service
               port:
                 number: 80
+          pathRewrite:
+            nginx.ingress.kubernetes.io/rewrite-target: /$2
 
         - pathType: Prefix
           path: /api/grades(/|$)(.*)
@@ -42,8 +46,10 @@ spec:
               name: grade-service
               port:
                 number: 80
+          pathRewrite:
+            nginx.ingress.kubernetes.io/rewrite-target: /$2
 
-        # Frontend - everything else (no regex rewrite)
+        # Frontend - everything else (no rewrite)
         - path: /
           pathType: Prefix
           backend:

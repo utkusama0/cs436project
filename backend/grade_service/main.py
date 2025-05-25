@@ -34,7 +34,7 @@ def list_grades(
 @router.post("/", response_model=GradeSchema, status_code=status.HTTP_201_CREATED)
 def create_grade(grade_in: GradeCreate, db: Session = Depends(get_db)):
     try:
-        new_grade = Grade(**grade_in.dict())
+        new_grade = Grade(**grade_in.model_dump())
         db.add(new_grade)
         db.commit()
         db.refresh(new_grade)
@@ -63,7 +63,7 @@ def update_grade(grade_id: int, grade_in: GradeUpdate, db: Session = Depends(get
         g = db.query(Grade).filter(Grade.grade_id == grade_id).first()
         if not g:
             raise HTTPException(status_code=404, detail="Grade not found")
-        for field, value in grade_in.dict(exclude_unset=True).items():
+        for field, value in grade_in.model_dump(exclude_unset=True).items():
             setattr(g, field, value)
         db.commit()
         db.refresh(g)

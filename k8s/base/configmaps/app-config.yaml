@@ -4,6 +4,10 @@ metadata:
   name: app-config
   namespace: student-management
 data:
-  REDIS_HOST: "redis-service"
-  REDIS_PORT: "6379"
-  # Diğer uygulama konfigürasyonları...
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  REDIS_TTL: "3600"
+  CORS_ORIGINS: "*"
+  CORS_CREDENTIALS: "true"
+  CORS_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+  CORS_HEADERS: "*"

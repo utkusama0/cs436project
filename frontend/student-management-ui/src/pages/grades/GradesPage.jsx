@@ -48,7 +48,7 @@ const GradesPage = () => {
     <Container className="my-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Grades</h1>
-        <Link to="/grades/new" className="btn btn-success">
+        <Link to="/grades/new/edit" className="btn btn-success">
           Record New Grade
         </Link>
       </div>

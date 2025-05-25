@@ -160,7 +160,7 @@ const CourseDetailPage = () => {
               <div className="d-flex justify-content-end mt-3">
                 <Button 
                   as={Link} 
-                  to={`/grades/new?courseCode=${courseCode}`} 
+                  to={`/grades/new/edit`} 
                   variant="primary"
                 >
                   Add Student to Course

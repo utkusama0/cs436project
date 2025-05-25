@@ -6,7 +6,7 @@ from student_service.models import Student
 from database import get_db
 
 app = FastAPI()
-router = APIRouter()
+router = APIRouter(tags=["students"])
 
 @router.get("/", response_model=List[StudentSchema])
 def list_students(db: Session = Depends(get_db)):
@@ -28,7 +28,7 @@ def list_students(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=StudentSchema, status_code=status.HTTP_201_CREATED)
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
-    db_student = Student(**student.dict())
+    db_student = Student(**student.model_dump())
     db.add(db_student)
     db.commit()
     db.refresh(db_student)
@@ -46,7 +46,7 @@ def update_student(student_id: str, student: StudentUpdate, db: Session = Depend
     db_student = db.query(Student).filter(Student.student_id == student_id).first()
     if not db_student:
         raise HTTPException(status_code=404, detail="Student not found")
-    for key, value in student.dict(exclude_unset=True).items():
+    for key, value in student.model_dump(exclude_unset=True).items():
         setattr(db_student, key, value)
     db.commit()
     db.refresh(db_student)
@@ -62,4 +62,4 @@ def delete_student(student_id: str, db: Session = Depends(get_db)):
     return
 
 # Mount the router
-app.include_router(router, prefix="/api/students", tags=["students"])
+app.include_router(router)

@@ -12,15 +12,12 @@ COPY database.py       ./database.py
 # 3) Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4) Copy just your student_service code
-# ...existing code...
 # 4) Copy the entire student_service directory into /app
 COPY student_service/ ./student_service/
-# ...existing code...
 
-# 5) Environment variables (unchanged)
+# 5) Environment variables - FIXED DATABASE IP
 ENV PYTHONPATH=/app
-ENV DB_HOST=10.128.0.2
+ENV DB_HOST=10.128.0.6
 ENV DB_PORT=5432
 ENV DB_USER=postgres
 ENV DB_PASSWORD=12345678

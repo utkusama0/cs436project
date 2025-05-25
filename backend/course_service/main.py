@@ -6,7 +6,7 @@ from course_service.models import Course
 from database import get_db
 
 app = FastAPI()
-router = APIRouter()
+router = APIRouter(tags=["courses"])
 
 @router.get("/", response_model=List[CourseSchema])
 def list_courses(db: Session = Depends(get_db)):
@@ -25,7 +25,7 @@ def list_courses(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=CourseSchema, status_code=status.HTTP_201_CREATED)
 def create_course(course: CourseCreate, db: Session = Depends(get_db)):
-    db_course = Course(**course.dict())
+    db_course = Course(**course.model_dump())
     db.add(db_course)
     db.commit()
     db.refresh(db_course)
@@ -43,7 +43,7 @@ def update_course(course_code: str, course: CourseUpdate, db: Session = Depends(
     db_course = db.query(Course).filter(Course.course_code == course_code).first()
     if not db_course:
         raise HTTPException(status_code=404, detail="Course not found")
-    for key, value in course.dict(exclude_unset=True).items():
+    for key, value in course.model_dump(exclude_unset=True).items():
         setattr(db_course, key, value)
     db.commit()
     db.refresh(db_course)
@@ -59,4 +59,4 @@ def delete_course(course_code: str, db: Session = Depends(get_db)):
     return
 
 # Mount the router
-app.include_router(router, prefix="/api/courses", tags=["courses"])
+app.include_router(router)
